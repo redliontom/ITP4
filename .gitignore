@@ -1,0 +1,11 @@
+#Win Fags
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+#Mac Fags
+.DS_Store
+
+# KDE
+.directory 
