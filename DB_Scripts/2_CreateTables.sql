@@ -28,10 +28,15 @@ create table public.like(
 
 drop table if exists public.foto cascade;
 create table public.foto (
-	pk_foto			serial primary key references public.entity(pk_entity),
+	pk_foto			integer primary key references public.entity(pk_entity),
 	fk_user			integer references public.user(pk_user),
-	directory		text
-	-- TODO: Zusätzliche Spalten einfügen
+	directory		text,
+	flash			boolean,
+	aperture		text,
+	exposure		text,
+	focal_distance		integer,
+	iso			integer,
+	exposure_time		text
 );
 
 drop table if exists public.foto_attribute cascade;
@@ -49,7 +54,7 @@ create table public.rel_foto_attribute (
 
 drop table if exists public.comment cascade;
 create table public.comment (
-	pk_comment		serial primary key references public.entity(pk_entity),
+	pk_comment		integer primary key references public.entity(pk_entity),
 	fk_user			integer references public.user(pk_user),
 	fk_comment_on		integer references public.entity(pk_entity)
 );
@@ -84,4 +89,17 @@ create table public.rel_album_foto (
 	fk_album 		integer references public.album(pk_album),
 	fk_foto			integer references public.foto(pk_foto)
 
+);
+
+drop table if exists public.equipment cascade;
+create table public.equipment (
+	pk_equipment 		serial primary key,
+	equipment_type		text,
+	equipment_name		text
+);
+
+drop table if exists public.rel_user_equipment cascade;
+create table public.rel_user_equipment (
+	fk_user			integer references public.user(pk_user),
+	fk_equipment		integer references public.equipment(pk_equipment)
 );
