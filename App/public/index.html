@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Polaroid</title>
+	
+	<link href='css/polaroidstyle.css' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Lato:300,400,700,900,300italic,400italic,700italic,900italic' rel='stylesheet' type='text/css'>
+	<link href='http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css' rel='stylesheet' type='text/css'>
+</head>
+<body OnLoad="document.login.username.focus();">
+	<div class="error"></div>
+	<div id="box">
+		<div id="box_content">
+			<header id="index_header">
+				<h1><i class="fa fa-camera-retro"></i> polaroid</h1>
+				<h4>A photo community for creative photographers.</h4>
+			</header>
+			<form role="form" name="login" accept-charset="utf-8" onsubmit="return validateForm()" method="post" action="">
+				<input class="input_text" type="text" name="username" value="" placeholder="Username">
+				<input class="input_text" type="password" name="password" value="" placeholder="Password">
+				<p>
+					<input type="checkbox" checked="checked" value="1" name="remember"> Keep me logged in
+					<span class="divider1">
+						<a href="account/forgot/index.html">Forgot your password?</a>
+					</span>
+				</p>
+				<button class="button_submit" type="submit" name="submit">Login</button>
+				<span class="divider2">
+					<a href="account/signup/index.html">Create Your Account</a>
+				</span>
+			</form>
+		</div>
+		<footer id="index_footer">
+			polaroid © <script>document.write(new Date().getFullYear())</script> - English
+		</footer>
+	</div>
+	<script src="js/error_validation.js"></script>
+	<footer class="start">
+		<i class="fa fa-html5"></i> <i class="fa fa-css3"></i>
+	</footer>
+</body>
+</html> 
