@@ -179,3 +179,59 @@ footer.start {
 	width: 100%;
 	top: 5.0em;	
 }
+/*--------------------------------------------*/
+
+/*feeds*/
+.feeds{
+	border: 2px solid #394045;
+	margin-bottom: 1em;
+}
+
+.feeds .info_bar{
+	height: 2.6em;
+	border-bottom: 2px solid #394045;
+}
+
+.feeds .info_bar .avatar{
+	width: 2.6em;
+	height: 2.6em;
+	border-right: 2px solid #394045;
+}
+
+.feeds .info_bar .username{
+	position: absolute;
+	font-size: 1.5em;
+	margin-top: 0.25em;
+	margin-left: 0.8em;
+}
+
+.feeds .info_bar .time{
+	position: absolute;
+	font-size: 1em;
+	margin-top: 0.75em;
+	margin-left: 14.5em;
+}
+
+.feeds .info_bar .fa-thumbs-up{
+	position: absolute;
+	margin-top: 0.95em;
+	right: 15.5em;
+}
+
+.feeds .info_bar .like{
+	position: absolute;
+	margin-top: 0.75em;
+	right: 11.5em;
+}
+
+.feeds .info_bar .fa-comments-o{
+	position: absolute;
+	margin-top: 0.95em;
+	right: 8em;
+}
+
+.feeds .info_bar .comment{
+	position: absolute;
+	margin-top: 0.75em;
+	right: 1.5em;
+}
