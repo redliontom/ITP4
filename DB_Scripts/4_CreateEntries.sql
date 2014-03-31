@@ -1,2 +1,2 @@
 ﻿insert into public.user(email,password,username,forename,surname) 
-	values ('user@userweb.at',sha256('password'),'testuser', 'test', 'user');
+	values ('user@userweb.at',crypt('password', gen_salt('bf', 8)),'testuser', 'test', 'user');
