@@ -1,5 +1,5 @@
 body { 
-	background-color: #efeff0;
+	background-color: #e9eaed;
 	font-family: 'Lato',sans-serif;
 	font-weight: 300;
 	font-size: 100%;
@@ -176,7 +176,7 @@ footer.start {
 /* */
 #content_container {
 	position: relative;
-	width: 100%;
+	width: 95%;
 	top: 5.0em;	
 }
 /*--------------------------------------------*/
