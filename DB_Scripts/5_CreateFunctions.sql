@@ -11,6 +11,19 @@ begin
 end
 $$ language plpgsql;
 
+create or replace function func_verify_user_cookie(_username text, _hash text)
+	returns text
+	as $$
+declare
+	_passwordHash text := (select password from public.user where username=_username);
+begin
+	if(_passwordHash=_hash) then 
+		return _passwordHash;
+	end if;
+	return 'null';
+end
+$$ language plpgsql;
+
 create or replace function func_register_user( 
 					_email text,
 					_password text,
