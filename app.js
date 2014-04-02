@@ -3,7 +3,7 @@ var http = require('http');
 var app = express();
 
 app.configure(function(){
-	app.set('port', 80);
+	app.set('port', 8080);
 	app.use(express.static(__dirname + '/App/public'));
 	app.use(express.json());
 	app.use(express.urlencoded());
