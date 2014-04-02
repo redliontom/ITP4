@@ -1,19 +1,13 @@
 ﻿create or replace function func_verify_user(_username text, _password text)
-	returns boolean
+	returns text
 	as $$
+declare
+	_passwordHash text := (select password from public.user where username=_username);
 begin
-	if(
-		select true 
-		from 
-			public.user 
-		where 
-			password=crypt(_password, password)
-		and 
-			username=_username
-	) then 
-		return true;
+	if(_passwordHash=crypt(_password, _passwordHash)) then 
+		return _passwordHash;
 	end if;
-	return false;
+	return 'null';
 end
 $$ language plpgsql;
 
