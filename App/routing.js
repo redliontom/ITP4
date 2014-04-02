@@ -7,6 +7,7 @@ function login (request, response)
 			console.log(error);
 		} else {
 			if(result.rows[0].retval) {
+				request.session.user = result.rows[0].retval;
 				response.redirect(301, '/account');
 			} else {
 				response.set('error', 1);
@@ -20,7 +21,7 @@ function signup (request, response)
 {
 	var body = request.body;
 	DB.SignUp(body.first, body.last, body.user, body.mail, body.password, function(error, result) {
-		// TODO: add register logic
+		// TODO: add signup logic
 		response.set('error', 1);
 		response.redirect(301, '/');
 	});
