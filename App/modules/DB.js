@@ -19,6 +19,12 @@ exports.Login = function(username, password, callback)
 	});
 }
 
+exports.SignUp = function(first, last, user, mail, password, callback)
+{
+	// TODO: add database code
+	callback(null, null);
+}
+
 //Test
 exports.Login('testuser', 'password', function(e) {
 	console.log(e);

@@ -8,6 +8,9 @@ app.configure(function(){
 	app.use(express.json());
 	app.use(express.urlencoded());
 	app.use(express.cookieParser());
+	app.use(express.cookieSession({
+		secret: 'polaroid',
+	}));
 	app.use(app.router);
 });
 

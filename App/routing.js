@@ -7,10 +7,8 @@ function login (request, response)
 			console.log(error);
 		} else {
 			if(result.rows[0].retval) {
-				console.log('erfolg');
 				response.redirect(301, '/account');
 			} else {
-				console.log('misserfolg');
 				response.set('error', 1);
 				response.redirect(301, '/');
 			}
@@ -18,8 +16,32 @@ function login (request, response)
 	});
 };
 
+function signup (request, response)
+{
+	var body = request.body;
+	DB.SignUp(body.first, body.last, body.user, body.mail, body.password, function(error, result) {
+		// TODO: add register logic
+		response.set('error', 1);
+		response.redirect(301, '/');
+	});
+};
+
+function create (request, response)
+{
+	response.redirect(301, 'account/signup');
+};
+
 module.exports = function(app) {
 	app.post('/', function(request, response) {
 		login(request, response);
+		console.log(request.session);
+	});
+	app.post('/account/signup', function(request, response) {
+		signup(request, response);
+	})
+
+	// create button in login screen
+	app.get('/create', function(request, response) {
+		create(request, response);
 	});
 };
