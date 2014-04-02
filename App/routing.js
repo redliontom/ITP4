@@ -1,18 +1,25 @@
 var DB = require('./modules/DB');
 
-module.exports = function(app) {
-	app.post('/', function(req,res) {
-		DB.Login(req.body.username, req.body.password, function(err, result) {
-			if(err) {
-				console.log(err);
+function login (request, response)
+{
+	DB.Login(request.body.username, request.body.password, function(error, result) {
+		if(error) {
+			console.log(error);
+		} else {
+			if(result.rows[0].retval) {
+				console.log('erfolg');
+				response.redirect(301, '/account');
 			} else {
-				if(result.rows[0].retval) {
-					console.log('erfolg');
-					res.redirect('/account');
-				} else {
-					console.log('misserfolg');
-				}
+				console.log('misserfolg');
+				response.set('error', 1);
+				response.redirect(301, '/');
 			}
-		});
+		}
+	});
+};
+
+module.exports = function(app) {
+	app.post('/', function(request, response) {
+		login(request, response);
 	});
 };
