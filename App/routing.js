@@ -48,22 +48,37 @@ function signup (request, response)
 	});
 };
 
+function forgot (request, response)
+{
+	// TODO: check and send mail
+}
+
 function create (request, response)
 {
 	response.redirect(301, 'account/signup');
 };
 
-module.exports = function(app) {
+function directCall (app)
+{
 	app.post('/', function (request, response) {
 		login(request, response);
-		console.log(request.session);
 	});
 	app.post('/account/signup', function (request, response) {
 		signup(request, response);
 	})
+	app.post('/account/forgot', function (request, response) {
+		forgot(request, response);
+	});
+};
 
-	// create button in login screen
+function virtualLink (app)
+{
 	app.get('/create', function (request, response) {
 		create(request, response);
 	});
+};
+
+module.exports = function(app) {
+	directCall(app);
+	virtualLink(app);
 };
