@@ -6,7 +6,7 @@ function login (request, response)
 		if(error) {
 			console.log(error);
 		} else {
-			if(result.rows[0].retval) {
+			if(result.rows[0].retval != "null") {
 				request.session.user = result.rows[0].retval;
 				response.redirect(301, '/account');
 			} else {
