@@ -12,6 +12,7 @@ exports.login = function(username, password, callback) {
 		var query = client.query('select func_verify_user($1, $2) as retval', [username, password], function (err, result) {
 			if(err) {
 				callback(err);
+				done();
 			} else {
 				//console.log('%s', result.rows[0].retval);
 				callback(null, result);
@@ -32,6 +33,7 @@ exports.signUp = function(first, last, user, mail, password, callback) {
 		var query = client.query('select func_register_user($1, $2, $3, $4, $5) as retval', [mail, password, user, first, last], function (error, result) {
 			if (error) {
 				callback(error, null);
+				done();
 			} else {
 				callback(null, result);
 				done();
@@ -48,6 +50,7 @@ exports.checkUser = function (username, password, callback) {
 		var query = client.query('select func_verify_user_cookie($1, $2) as retval', [username, password], function (error, result) {
 			if (error) {
 				callback(error, null);
+				done();
 			} else {
 				callback(null, result);
 				done();
@@ -58,5 +61,5 @@ exports.checkUser = function (username, password, callback) {
 
 //Test
 exports.login('testuser', 'password', function(e) {
-	console.log(e);
+	//console.log(e);
 });

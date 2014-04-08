@@ -1,37 +1,32 @@
 var DB = require('./modules/DB');
 var fs = require('fs');
 
-function initial (request, response)
-{
-	console.log('initialCall');
-	checkUser(request, response, username, password, request.cookies.polaroidRemember);
-	checkUser(request, response, username, password, request.session.polaroidHash);
-};
-
 function login (request, response)
 {
-	var username = request.body.username;
-	var password = request.body.password;
-	var remember = request.body.remember;
+	try {
+		var username = request.body.username;
+		var password = request.body.password;
 
-	DB.login(username, password, function (error, result) {
-		if(error) {
-			logfile('error.log', error);
-		} else {
-			if(result.rows[0].retval != "null") {
-				if (remember) {
-					logfile('info.log', 'remember');
-					response.cookie('polaroidRemember', result.rows[0].retval);
-				}
-				request.session.polaroidUser = username;
-				request.session.polaroidHash = result.rows[0].retval;
-				response.redirect(301, '/account');
+		DB.login(username, password, function (error, result) {
+			if(error) {
+				rememberext(request, response);
 			} else {
-				response.set('error', 1);
-				response.redirect(301, '/');
+				if(result.rows[0].retval != "null") {
+					if (request.body.remember) {
+						response.cookie('polaroidRememberUser', username);
+						response.cookie('polaroidRememberHash', result.rows[0].retval);
+					}
+					request.session.polaroidUser = username;
+					request.session.polaroidHash = result.rows[0].retval;
+					response.redirect(301, '/account');
+				} else {
+					rememberext(request, response);
+				}
 			}
-		}
-	});
+		});
+	} catch (e) {
+		rememberext(request, response);
+	}
 };
 
 function signup (request, response)
@@ -40,13 +35,17 @@ function signup (request, response)
 
 	DB.signUp(body.first, body.last, body.user, body.mail, body.password, function (error, result) {
 		if (error) {
-			response.set('error', 1);
-			response.redirect(301, '/');
+			rememberext(request, response);
 		} else {
 			// TODO: send confirmation mail
 			login(request, response);
 		}
 	});
+};
+
+function forgot (request, response)
+{
+	// TODO: sende mail udgl
 };
 
 function linkForgot (request, response)
@@ -66,18 +65,50 @@ function linkLogin (request, response)
 
 function linkLogout (request, response)
 {
-	request.session.destroy(function () {
-		response.redirect(301, '/');
-	});
+	request.session = null;
+	response.clearCookie('polaroidRememberUser');
+	response.clearCookie('polaroidRememberHash');
+	response.redirect(301, '/');
 };
 
-function checkUser (request, response, username, password, value)
+function remember (request, response)
 {
+	try {
+		checkUser(request, response, request.cookies.polaroidRememberUser, request.cookies.polaroidRememberHash);
+	} catch (e1) {
+		try {
+			checkUser(request, response, request.session.polaroidUser, request.session.polaroidHash);
+		} catch (e2) {
+			console.log('nothing');
+		}
+	}
+};
+
+function rememberext (request, response)
+{
+	try {
+		checkUser(request, response, request.cookies.polaroidRememberUser, request.cookies.polaroidRememberHash);
+	} catch (e1) {
+		try {
+			checkUser(request, response, request.session.polaroidUser, request.session.polaroidHash);
+		} catch (e2) {
+			response.set('error', 1);
+			response.redirect(301, '/');
+		}
+	}
+};
+
+function checkUser (request, response, username, password)
+{
+	if (!username || !password) {
+		throw "error";
+	}
+
 	DB.checkUser(username, password, function (error, result) {
 		if (error) {
 			logfile('error.log', error);
-			response.redirect(301, '/');
-		} else if (result == value) {
+			//response.redirect(301, '/');
+		} else {
 			response.redirect(301, '/account');
 		}
 	});
@@ -99,6 +130,52 @@ function logfile (path, message)
 		}
 	});
 };
+
+/*
+function call(request, response)
+{
+	console.log(request.url);
+	switch (request.url) {
+	case '/':
+		login(request, response);
+		break;
+	case '/account/signup/':
+		signup(request, response);
+		break;
+	case '/account/forgot/':
+		forgot(request, response);
+		break;
+	default:
+		rememberext(request, response);
+		break;
+	}
+};
+
+function link(request, response)
+{
+	switch (request.url) {
+	case '/forgot-link':
+		linkForgot(request, response);
+		break;
+	case '/create-link':
+		linkCreate(request, response);
+		break;
+	case '/login-link':
+		linkLogin(request, response);
+		break;
+	case '/logout-link':
+		linkLogout(request, response);
+		break;
+	default:
+		break;
+	}
+};
+
+exports.routing = function (request, response) {
+	call(request, response);
+	link(request, response);
+};
+*/
 
 function directCall (app)
 {
