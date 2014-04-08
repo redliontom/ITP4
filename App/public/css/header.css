@@ -124,3 +124,14 @@ header.navigation {
 	padding-left: 1.5em;
 	margin-top: 0.12em;
 }
+
+
+a.right_icon {
+    color: #fff;
+    text-decoration: none;
+}
+
+a.right_icon:hover {
+    color: #c9ddff;
+    text-decoration: none;
+}
