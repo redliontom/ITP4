@@ -31,16 +31,22 @@ create or replace function func_register_user(
 					_forename text,
 					_surname text
 					)
-	returns void
+	returns boolean
 	as $$
 begin
-	insert into public.user(email,password,username,forename,surname) 
+	insert into public.user(email,password,username,forename,surname,status) 
 		values (
 			_email,
 			crypt(_password, gen_salt('bf', 8)),
 			_username,
 			_forename,
-			_surname
+			_surname,
+			false
 			);
+	return true;
+exception
+	when unique_violation then
+	return false;
 end
 $$ language plpgsql;
+

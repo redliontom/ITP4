@@ -5,7 +5,8 @@ create table public.user (
 	password		text not null,
 	username		text unique not null,
 	forename		text,
-	surname			text
+	surname			text,
+	status			boolean
 );
 
 drop table if exists public.user_friend cascade;
