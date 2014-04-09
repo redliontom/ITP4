@@ -5,9 +5,8 @@ var path = __dirname + '/App/public';
 var routing = require('./App/routing');
 
 app.configure(function(){
-	app.set('port', 8080);
+	app.set('port', 8888);
 	//app.use(express.logger());
-	app.use(express.static(path));
 	//app.use(routing.routing);
 	app.use(express.json());
 	app.use(express.urlencoded());
@@ -16,6 +15,7 @@ app.configure(function(){
 		secret: 'polaroid'
 	}));
 	app.use(app.router);
+	app.use(express.static(path));
 });
 
 routing(app);
