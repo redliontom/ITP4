@@ -1,0 +1,32 @@
+.menu {
+    overflow-x: hidden;
+    position: relative;
+    left: 0;
+}
+
+.menu-open {
+    left: 14.0em;
+}
+
+.menu-open .menu-side {
+    left: 0;
+}
+
+.menu-side,
+.menu {
+    -webkit-transition: left 0.2s ease;
+    -moz-transition: left 0.2s ease;
+    transition: left 0.2s ease;
+}
+
+.menu-side {
+    position: fixed;
+    top: 0em;
+    left: -14.0em;
+    width: 13.0em; /* 208px / 16px */
+    height: 100%;
+    padding: 0.5em; /* 8px / 16px */
+    background-color: #394045;
+    color: #fff;  
+    box-shadow: -8px 0px 8px   #2e2e2e inset;
+}
