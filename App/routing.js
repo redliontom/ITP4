@@ -2,12 +2,12 @@ var DB = require('./modules/DB');
 var fs = require('fs');
 
 module.exports = function(app) {
-	app.get('/account/', function (request, response) {
-		console.log('account req');
-		rememberext (request, response);
-	});
 	app.post('/', function (request, response) {
 		login(request, response);
+	});
+	app.post('/account', function (request, response) {
+		console.log('account req');
+		rememberext (request, response);
 	});
 	app.post('/account/signup', function (request, response) {
 		signup(request, response);
@@ -39,9 +39,11 @@ function login (request, response)
 
 		DB.login(username, password, function (error, result) {
 			if(error) {
+				console.log('error');
 				//rememberext(request, response);
 			} else {
 				if(result.rows[0].retval != "null") {
+					console.log('success');
 					if (request.body.remember) {
 						response.cookie('polaroidRememberUser', username);
 						response.cookie('polaroidRememberHash', result.rows[0].retval);
@@ -50,6 +52,7 @@ function login (request, response)
 					request.session.polaroidHash = result.rows[0].retval;
 					response.redirect(301, '/account');
 				} else {
+					console.log('failure');
 					response.redirect(301, '/');
 				}
 			}
@@ -81,26 +84,27 @@ function forgot (request, response)
 
 function linkForgot (request, response)
 {
-	response.redirect(301, 'account/forgot');
+	response.redirect('/account/forgot');
 }
 
 function linkCreate (request, response)
 {
-	response.redirect(301, 'account/signup');
+	response.redirect('/account/signup');
 };
 
 function linkLogin (request, response)
 {
 	console.log('linklogin');
-	response.redirect(301, '/');
+	response.redirect('/');
 };
 
 function linkLogout (request, response)
 {
 	console.log('linklogout');
-	request.session = null;
-	response.clearCookie('polaroidRememberUser');
-	response.clearCookie('polaroidRememberHash');
+	request.session.polaroidUser = null;
+	request.session.polaroidHash = null;
+	response.cookie('polaroidRememberUser', null);
+	response.cookie('polaroidRememberHash', null);
 	response.redirect(301, '/');
 };
 
