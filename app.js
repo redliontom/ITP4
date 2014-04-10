@@ -16,6 +16,13 @@ app.configure(function(){
 	}));
 	app.use(app.router);
 	app.use(express.static(path));
+	app.use(function noCachePlease(req, res, next) {
+		if (req.url === '/logout-link') {
+			res.header("Cache-Control", "no-cache, no-store, must-revalidate");
+			res.header("Pragma", "no-cache");
+			res.header("Expires", 0);
+		}
+	});
 });
 
 routing(app);
