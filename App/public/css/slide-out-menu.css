@@ -27,6 +27,29 @@
     height: 100%;
     padding: 0.5em; /* 8px / 16px */
     background-color: #394045;
-    color: #fff;  
+    color: #bbb;  
     box-shadow: -8px 0px 8px   #2e2e2e inset;
+}
+
+.menu-side  ul {
+	list-style: none;
+    padding-left: 1.0em;
+}
+
+.menu-side li {
+    padding-bottom: 1.5em;
+}
+
+
+.menu-side li span {
+    padding-right: 1.5em;
+}
+
+.menu-side a {
+    text-decoration: none;
+    color: #bbb;
+}
+
+.menu-side a:hover {
+    color: #3498db !important;
 }
