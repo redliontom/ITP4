@@ -5,7 +5,7 @@ module.exports = function(app) {
 	app.post('/', function (request, response) {
 		login(request, response);
 	});
-	app.post('/account', function (request, response) {
+	app.get('/account', function (request, response) {
 		console.log('account req');
 		rememberext (request, response);
 	});
@@ -50,15 +50,15 @@ function login (request, response)
 					}
 					request.session.polaroidUser = username;
 					request.session.polaroidHash = result.rows[0].retval;
-					response.redirect(301, '/account');
+					response.redirect( '/account');
 				} else {
 					console.log('failure');
-					response.redirect(301, '/');
+					response.redirect( '/');
 				}
 			}
 		});
 	} catch (e) {
-		response.redirect(301, '/');
+		response.redirect( '/');
 	}
 };
 
@@ -101,11 +101,10 @@ function linkLogin (request, response)
 function linkLogout (request, response)
 {
 	console.log('linklogout');
-	request.session.polaroidUser = null;
-	request.session.polaroidHash = null;
+	request.session = null;
 	response.cookie('polaroidRememberUser', null);
 	response.cookie('polaroidRememberHash', null);
-	response.redirect(301, '/');
+	response.redirect( '/');
 };
 
 function remember (request, response)
@@ -131,7 +130,7 @@ function rememberext (request, response)
 			checkUser(request, response, request.session.polaroidUser, request.session.polaroidHash);
 		} catch (e2) {
 			response.set('error', 1);
-			response.redirect(301, '/');
+			response.redirect( '/');
 		}
 	}
 };
@@ -146,11 +145,11 @@ function checkUser (request, response, username, password)
 	DB.checkUser(username, password, function (error, result) {
 		if (error) {
 			logfile('error.log', error);
-			//response.redirect(301, '/');
+			//response.redirect( '/');
 		} else if(result.rows[0].retval != "null"){
-			response.status(200).sendfile('App/public/account/index.html');
+			response.status(200).sendfile('./App/public/account/index.html');
 		} else {
-			response.redirect(301, '/');
+			response.redirect( '/');
 		}
 	});
 };
