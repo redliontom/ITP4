@@ -2,11 +2,14 @@ var DB = require('./modules/DB');
 var fs = require('fs');
 
 module.exports = function(app) {
+	app.get('/', function (request, response) {
+		login(request, response);
+	});
 	app.post('/', function (request, response) {
 		login(request, response);
 	});
 	app.get('/account', function (request, response) {
-		rememberext (request, response);
+		remember(request, response);
 	});
 	app.post('/account/signup', function (request, response) {
 		signup(request, response);
@@ -35,29 +38,14 @@ function login (request, response)
 		var username = request.body.username;
 		var password = request.body.password;
 
-		DB.login(username, password, function (error, result) {
-			if(error) {
-				logfile('error.log', error);
-			} else {
-				if(result.rows[0].retval != "null") {
-					if (request.body.remember) {
-						response.cookie('polaroidRememberUser', username);
-						response.cookie('polaroidRememberHash', result.rows[0].retval);
-					}
-
-					request.session.polaroidUser = username;
-					request.session.polaroidHash = result.rows[0].retval;
-					response.redirect('/account');
-
-					logfile('info.log', 'user \'' + username + '\' logged in');
-				} else {
-					response.redirect( '/');
-				}
-			}
-		});
+		if (!username || !password) {
+			rememberNoRedirect(request, response);
+		} else {
+			loginext(request, response, username, password);
+		}
 	} catch (e) {
-		logfile('error.log', error);
-		response.redirect( '/');
+		rememberNoRedirect(request, response);
+		console.log('error.log', e);
 	}
 };
 
@@ -80,7 +68,8 @@ function loginext (request, response, username, password)
 
 					logfile('info.log', 'user \'' + username + '\' logged in');
 				} else {
-					response.redirect( '/');
+					response.redirect('/');
+					logfile('info.log', 'user \'' + username + '\' tried to log in');
 				}
 			}
 		});
@@ -96,7 +85,7 @@ function signup (request, response)
 
 	DB.signUp(body.first, body.last, body.user, body.mail, body.password, function (error, result) {
 		if (error) {
-			rememberext(request, response);
+			remember(request, response);
 		} else {
 			createUserDir(body.user);
 			loginext(request, response, body.user, body.password);
@@ -135,44 +124,64 @@ function linkLogout (request, response)
 
 function remember (request, response)
 {
-	try {
-		checkUser(request, response, request.cookies.polaroidRememberUser, request.cookies.polaroidRememberHash);
-	} catch (e1) {
-		try {
-			checkUser(request, response, request.session.polaroidUser, request.session.polaroidHash);
-		} catch (e2) {
-			console.log('nothing');
-		}
-	}
-};
-
-function rememberext (request, response)
-{
-	try {
-		checkUser(request, response, request.cookies.polaroidRememberUser, request.cookies.polaroidRememberHash);
-	} catch (e) {
-		try {
-			checkUser(request, response, request.session.polaroidUser, request.session.polaroidHash);
-		} catch (e) {
+	rememberext(request, response, function (error, result) {
+		if (error) {
 			response.set('error', 1);
 			response.redirect('/');
+			logfile('error.log', error);
+		} else if (result) {
+			response.redirect('/account');
+			logfile('info.log', 'user \'' + username + '\' logged in');
+		} else {
+			response.set('error', 1);
+			response.redirect('/');
+			logfile('info.log', 'user \'' + username + '\' tried to log in');
+		}
+	});
+};
+
+function rememberNoRedirect (request, response)
+{
+	rememberext(request, response, function (error, result) {
+		if (error) {
+			response.status(200).sendfile('./App/public/index.html');
+			logfile('error.log', error);
+		} else if (result) {
+			response.status(200).sendfile('./App/public/account/index.html');
+			logfile('info.log', 'user \'' + username + '\' logged in');
+		} else {
+			response.status(200).sendfile('./App/public/index.html');
+			logfile('info.log', 'user \'' + username + '\' tried to log in');
+		}
+	});
+};
+
+function rememberext (request, response, callback)
+{
+	try {
+		checkUser(request.cookies.polaroidRememberUser, request.cookies.polaroidRememberHash, callback);
+	} catch (e) {
+		try {
+			checkUser(request.session.polaroidUser, request.session.polaroidHash, callback);
+		} catch (e) {
+			callback(e, null);
 		}
 	}
 };
 
-function checkUser (request, response, username, password)
+function checkUser (username, password, callback)
 {
 	if (!username || !password) {
-		throw new Error("reference null");
+		throw new Error("null reference encountered");
 	}
 
 	DB.checkUser(username, password, function (error, result) {
 		if (error) {
-			logfile('error.log', error);
+			callback(error, null);
 		} else if(result.rows[0].retval != "null") {
-			response.status(200).sendfile('./App/public/account/index.html');
+			callback(null, true);
 		} else {
-			response.redirect('/');
+			callback(null, false);
 		}
 	});
 };
