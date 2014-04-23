@@ -242,3 +242,54 @@ footer.start {
 	right: 1.5em;
 	color: #3498db;
 }
+
+/*--------------------------------------------*/
+
+/*friends*/
+.friends{
+	background-color: #fff;
+	border: 1px solid #dfe0e4;
+	border-bottom: 2px solid #d0d1d5;
+	margin-bottom: 1em;
+	margin-left: 0.1em;
+	height: 4.2em;
+	width: 49%;
+	float: left;
+}
+
+.friends .fr-avatar{
+	width: 4.2em;
+	height: 4.2em;
+	float: left;
+}
+
+.friends .realname{
+	margin-top: 0.3em;
+	margin-left: 1.5em;
+	font-size: 1.5em;
+	float: left;
+}
+
+.friends .username{
+	font-size: 1.2em;
+	margin-top: 1.7em;
+	margin-left: -9.5em;
+	float: left;
+}
+
+.friends .command{
+	margin-top: 1.1em;
+	margin-right: 1.5em;
+	font-size: 1.2em;
+	float: right;
+}
+
+.friends .icon-command{
+	font-size: 1.8em;
+	margin-top: 0.7em;
+	margin-right: 1.2em;
+	font-size: 1.8em;
+	float: right;
+}
+
+/*--------------------------------------------*/
