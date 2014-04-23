@@ -6,7 +6,6 @@ module.exports = function(app) {
 		login(request, response);
 	});
 	app.get('/account', function (request, response) {
-		console.log('account req');
 		rememberext (request, response);
 	});
 	app.post('/account/signup', function (request, response) {
@@ -32,47 +31,75 @@ module.exports = function(app) {
 
 function login (request, response)
 {
-	console.log('login');
 	try {
 		var username = request.body.username;
 		var password = request.body.password;
 
 		DB.login(username, password, function (error, result) {
 			if(error) {
-				console.log('error');
-				//rememberext(request, response);
+				logfile('error.log', error);
 			} else {
 				if(result.rows[0].retval != "null") {
-					console.log('success');
 					if (request.body.remember) {
 						response.cookie('polaroidRememberUser', username);
 						response.cookie('polaroidRememberHash', result.rows[0].retval);
 					}
+
 					request.session.polaroidUser = username;
 					request.session.polaroidHash = result.rows[0].retval;
-					response.redirect( '/account');
+					response.redirect('/account');
+
+					logfile('info.log', 'user \'' + username + '\' logged in');
 				} else {
-					console.log('failure');
 					response.redirect( '/');
 				}
 			}
 		});
 	} catch (e) {
+		logfile('error.log', error);
 		response.redirect( '/');
 	}
 };
 
+function loginext (request, response, username, password)
+{
+	try {
+		DB.login(username, password, function (error, result) {
+			if(error) {
+				logfile('error.log', error);
+			} else {
+				if(result.rows[0].retval != "null") {
+					if (request.body.remember) {
+						response.cookie('polaroidRememberUser', username);
+						response.cookie('polaroidRememberHash', result.rows[0].retval);
+					}
+
+					request.session.polaroidUser = username;
+					request.session.polaroidHash = result.rows[0].retval;
+					response.redirect('/account');
+
+					logfile('info.log', 'user \'' + username + '\' logged in');
+				} else {
+					response.redirect( '/');
+				}
+			}
+		});
+	} catch (e) {
+		logfile('error.log', error);
+		response.redirect( '/');
+	}
+}
+
 function signup (request, response)
 {
-	console.log('signup');
 	var body = request.body;
 
 	DB.signUp(body.first, body.last, body.user, body.mail, body.password, function (error, result) {
 		if (error) {
 			rememberext(request, response);
 		} else {
-			// TODO: send confirmation mail
-			login(request, response);
+			createUserDir(body.user);
+			loginext(request, response, body.user, body.password);
 		}
 	});
 };
@@ -94,18 +121,16 @@ function linkCreate (request, response)
 
 function linkLogin (request, response)
 {
-	console.log('linklogin');
 	response.redirect('/');
 };
 
 function linkLogout (request, response)
 {
-	console.log('linklogout');
 	request.session = null;
 	response.cookie('polaroidRememberUser', null);
 	response.cookie('polaroidRememberHash', null);
 	response.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
-	response.redirect( '/');
+	response.redirect('/');
 };
 
 function remember (request, response)
@@ -123,46 +148,54 @@ function remember (request, response)
 
 function rememberext (request, response)
 {
-	console.log('rememberext');
 	try {
 		checkUser(request, response, request.cookies.polaroidRememberUser, request.cookies.polaroidRememberHash);
-	} catch (e1) {
+	} catch (e) {
 		try {
 			checkUser(request, response, request.session.polaroidUser, request.session.polaroidHash);
-		} catch (e2) {
+		} catch (e) {
 			response.set('error', 1);
-			response.redirect( '/');
+			response.redirect('/');
 		}
 	}
 };
 
 function checkUser (request, response, username, password)
 {
-	console.log('checkuser');
 	if (!username || !password) {
-		throw "error";
+		throw new Error("reference null");
 	}
 
 	DB.checkUser(username, password, function (error, result) {
 		if (error) {
 			logfile('error.log', error);
-			//response.redirect( '/');
-		} else if(result.rows[0].retval != "null"){
+		} else if(result.rows[0].retval != "null") {
 			response.status(200).sendfile('./App/public/account/index.html');
 		} else {
-			response.redirect( '/');
+			response.redirect('/');
+		}
+	});
+};
+
+function createUserDir (username)
+{
+	// __dirname =  <workingdir>/App
+	fs.mkdir(__dirname + '/public/account/users/' + username, 0660, function (error) {
+		if (error) {
+			logfile('error.log', error);
+		} else {
+			logfile('info.log', 'created new user \'' + username + '\'');
 		}
 	});
 };
 
 function logfile (path, message)
 {
-	console.log('logfile');
-	console.log(message);
+	console.log(path + ': ' + message);
 	return;
 	// TODO: vor auslieferung die ersten zwei zeilen löschen
 
-	fs.open('error.log', 'a', 0666, function (error, fd) {
+	fs.open(path, 'a', 0666, function (error, fd) {
 		if (error) {
 			console.log(error);
 			console.log(message);
