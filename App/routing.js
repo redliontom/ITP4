@@ -39,12 +39,12 @@ function login (request, response)
 		var password = request.body.password;
 
 		if (!username || !password) {
-			rememberNoRedirect(request, response);
+			remember(request, response);
 		} else {
 			loginext(request, response, username, password);
 		}
 	} catch (e) {
-		rememberNoRedirect(request, response);
+		remember(request, response);
 		console.log('error.log', e);
 	}
 };
@@ -74,8 +74,8 @@ function loginext (request, response, username, password)
 			}
 		});
 	} catch (e) {
+		response.status(200).sendfile('./App/public/index.html');
 		logfile('error.log', error);
-		response.redirect( '/');
 	}
 }
 
@@ -122,7 +122,7 @@ function linkLogout (request, response)
 	response.redirect('/');
 };
 
-function remember (request, response)
+function rememberRedirect (request, response)
 {
 	rememberext(request, response, function (error, result) {
 		if (error) {
@@ -131,27 +131,27 @@ function remember (request, response)
 			logfile('error.log', error);
 		} else if (result) {
 			response.redirect('/account');
-			logfile('info.log', 'user \'' + username + '\' logged in');
+			logfile('info.log', 'user logged in');
 		} else {
 			response.set('error', 1);
 			response.redirect('/');
-			logfile('info.log', 'user \'' + username + '\' tried to log in');
+			logfile('info.log', 'user tried to log in');
 		}
 	});
 };
 
-function rememberNoRedirect (request, response)
+function remember (request, response)
 {
 	rememberext(request, response, function (error, result) {
 		if (error) {
-			response.status(200).sendfile('./App/public/index.html');
+			response.status(200).sendfile('./App/public/index.html'); console.log('error');
 			logfile('error.log', error);
 		} else if (result) {
-			response.status(200).sendfile('./App/public/account/index.html');
-			logfile('info.log', 'user \'' + username + '\' logged in');
+			response.status(200).sendfile('./App/public/account/index.html'); console.log('true');
+			logfile('info.log', 'user logged in');
 		} else {
-			response.status(200).sendfile('./App/public/index.html');
-			logfile('info.log', 'user \'' + username + '\' tried to log in');
+			response.status(200).sendfile('./App/public/index.html'); console.log('false');
+			logfile('info.log', 'user tried to log in');
 		}
 	});
 };
@@ -171,7 +171,7 @@ function rememberext (request, response, callback)
 
 function checkUser (username, password, callback)
 {
-	if (!username || !password) {
+	if (!username || !password || username == 'undefined' || password == 'undefined') {
 		throw new Error("null reference encountered");
 	}
 
