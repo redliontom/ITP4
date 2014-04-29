@@ -1,4 +1,5 @@
 $(document).ready(function() {
+    
     $("#m-home").click(function() {
         $("#content_container").animate({opacity:"0", filter:"alpha(opacity=0)"}, 200, function() {
             $("#content_container").load("../account/feeds.html", function() {
@@ -14,4 +15,22 @@ $(document).ready(function() {
             });
         });
     });
+    
+    $("#m-profile").click(function() {
+        $("#content_container").animate({opacity:"0", filter:"alpha(opacity=0)"}, 200, function() {
+            $("#content_container").load("../account/profile.html", function() {
+               $("#content_container").animate({opacity:"1", filter:"alpha(opacity=100)"}, 200);
+            });
+        });
+    });
+    
+    $("#m-find-friends").click(function() {
+        $("#content_container").animate({opacity:"0", filter:"alpha(opacity=0)"}, 200, function() {
+            $("#content_container").load("../account/find.html", function() {
+               $("#content_container").animate({opacity:"1", filter:"alpha(opacity=100)"}, 200);
+            });
+        });
+    });
+    
 });
+
