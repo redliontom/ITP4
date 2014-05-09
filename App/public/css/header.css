@@ -56,6 +56,45 @@ header.navigation {
 #menu a:visited {
 	color: #c9ddff;
 }
+/* ---------------------------------- */
+
+#menu_mobile {
+	position: relative;
+	margin: 0em;
+    top: 3px;
+	float: left;
+	width: 12em;
+	color: #fff;
+	font-size: 1.3em;
+	font-weight: 700;
+}
+
+#menu_mobile ul {
+	list-style: none;
+	padding: 0em;
+	margin: 0em;
+}
+
+#menu_mobile li {
+	display: inline;
+	padding-left: 1.6em;
+	
+}
+
+
+#menu_mobile a {
+	color: #c9ddff;
+}
+
+#menu_mobile a:hover {
+	text-decoration: none;	
+	color: #fff;
+}
+
+#menu_mobile a:visited {
+	color: #c9ddff;
+}
+/* ---------------------------------- */
 
 #menu_right {
 	position: relative;
@@ -89,6 +128,18 @@ header.navigation {
 
 #menu_right li:hover {
 	background-color: #0af;
+}
+
+#mnu_right_mobile {
+    position: relative;
+    float: right !important;
+    top: 3px;
+    margin: 0em;
+    font-size: 1.3em;
+    color: #fff;
+    margin-right: 0.5em;
+    border-left: 1px solid #64b5eb;
+    padding-left: 1.0em;
 }
 
 #hd_subnav {
