@@ -1,4 +1,5 @@
 $(document).ready(function() {
+     $("#content_container").load("../account/feeds.html");
     
     $("#m-home").click(function() {
         $("#content_container").animate({opacity:"0", filter:"alpha(opacity=0)"}, 200, function() {
