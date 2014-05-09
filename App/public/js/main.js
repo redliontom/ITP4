@@ -36,6 +36,7 @@ $(document).ready(function() {
         });
         document.getElementById("subsection").innerHTML="Find Friends";
     });
+        
     
     $("#m-mhome").click(function() {
         $("#content_container").animate({opacity:"0", filter:"alpha(opacity=0)"}, 200, function() {
