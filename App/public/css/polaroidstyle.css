@@ -204,8 +204,15 @@ footer.start {
 #content_container {
 	position: relative;
     margin: 0 auto;
-	width: 95%;
-	top: 5.2em;	
+	width: 100%;
+	top: 4.65em;	
+}
+
+#content_container_small {
+    position: relative;
+    margin: 0 auto;
+    width: 95%;
+    top: 0.5em;
 }
 /*--------------------------------------------*/
 
@@ -271,60 +278,93 @@ footer.start {
 /*--------------------------------------------*/
 
 /*profile*/
-#background-title{
-	background-color: #81DAF5;
-	border: 1px solid #dfe0e4;
+#profile_header {
+    background: #fff;
 	border-bottom: 2px solid #d0d1d5;
 	margin-bottom: 1em;
-    height: 20.0em /* 320px / 16px */
 }
 
-#profile {
-    margin: 2.0em auto;
-    text-align: center;
+#profile_header_wall {
+    width: 100%;
+    border-bottom: 1px solid #dfe0e4;
+    height: 14.0em; /* 224px / 16px */
+    background-color: #3498db;
 }
-
-#profile-picture {
-    margin: auto;
-    background-color: red;
-    border: 8px solid #fff;
-    border-bottom: 25px solid #fff;
+#profile_header_info {
+    position: relative;
+    width: 95%;
+    margin: 0 auto;
+}
+#profile_header_user {
+    position: relative;
+    width: 95%;
+    margin: 0 auto;
+    top: 5.5em;
+}
+#profile_picture {
     width: 10.0em; /* 160px / 16px */
     height: 10.0em;
+    border: 8px solid #fff;
+    border-radius: 1.0em;
+    box-shadow: 0px 2px 4px #888;
+    float: left;
 }
 
-#profile h1 {
-    color: #fff;
-    font-weight: 700;
-    font-size: 1.5em; /* 24px / 16px */
-}
-
-#profile h2 {
-    color #e6e6e6;
-    font-weight: 400;
-    font-size: 1.2em; /* 20px / 16px */   
-}
-
-#equipment-tl-header{
-    background-color: #394045 !important;
-    border: 1px solid #dfe0e4;
-    border-bottom: 2px solid dfe0e4;
-    padding-left: 1.0em;
+#profile_equipment {
+    position: relative;
+    margin-left: 13.0em;
+    margin-top: 1.0em;
     margin-bottom: 1.0em;
+    
+}
+
+#profile_username {
+    position: relative;
+    margin-left: 13.0em;
+    top: 4.0em;
+}
+
+#p_username {
+    font-size: 2.0em; /* 32px / 16px */
+    font-weight: 700;
     color: #fff;
 }
 
-#equipment-tl-header h1{
-    font-size: 1.2em; /* 20px / 16px */
-	font-weight: 400;
-    margin: 0.4em;
+#p_mail {
+    font-size: 0.8em;
+    color: #e6e6e6;
 }
 
-#timeline {
-    background-color: #fff;
-    border: 1px solid #dfe0e4;
-	border-bottom: 2px solid #d0d1d5;
-	margin-bottom: 1em;
+#p_equipment {
+    color: #3498db !important;
+    font-weight: 700;
+    padding-right: 1.0em;
+}
+
+#p_h {
+    font-weight: 400;
+    padding-right: 0.5em;
+}
+
+#p_e {
+    padding-right: 1.0em;
+}
+
+.info_equipment {
+    color: #3498db !important;
+    font-weight: 700;
+    border: 1px solid #3498db !important;
+    border-radius: 0.3em;
+    padding: 0.2em 0.6em 0.2em 0.6em;
+}
+
+.info_equipment:hover {
+    text-decoration: none;
+    border: 2px solid #3498db !important;
+}
+
+.clear {
+clear:left;
 }
 /*--------------------------------------------*/
 
