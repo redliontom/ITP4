@@ -210,7 +210,7 @@ footer.start {
 
 #content_container_small {
     position: relative;
-    margin: 0 auto;
+    margin: 0 auto 6.0em;
     width: 95%;
     top: 0.5em;
 }
@@ -366,6 +366,154 @@ footer.start {
 .clear {
 clear:left;
 }
+
+#profile_nav {
+    position: relative;
+    float: left;
+    top: 0.5em;
+    left: 4.0em;
+    color: #bbb;
+}
+
+#profile_nav ul {
+	list-style: none;
+	padding: 0em;
+	margin: 0em;
+    float: left;
+}
+
+#profile_nav li {
+	display: inline;
+	padding: 0.15em 0.5em 0.8em 0.5em;	
+    color: #3498db !important;
+}
+
+#profile_nav a {
+    color: #bbb;
+}
+
+#profile_nav a:hover {
+    text-decoration: none;
+    color: #fff;
+}
+
+#skill_nav {
+    position: relative;
+    float: right;
+    right: 0.8em;
+    top: 0.5em;
+    color: #3498db !important;
+}
+
+#skill_h {
+    font-weight: 400;
+    color: #bbb;
+    padding-right: 2.0em;
+}
+
+/*--------------------------------------------*/
+
+/*profile rd*/
+#profile_header_rd {
+    background: #fff;
+	border-bottom: 2px solid #d0d1d5;
+	margin-bottom: 1em;
+    height: 10.5em;
+
+}
+
+#profile_header_wall_rd {
+    width: 100%;
+    border-bottom: 1px solid #dfe0e4;
+    height: 8.0em; /* 224px / 16px */
+    background-color: #3498db;
+}
+
+#profile_header_info_rd {
+    position: relative;
+    width: 95%;
+    top: 0.5em;
+    margin: 0 auto;
+}
+
+#profile_picture_rd {
+    width: 6.0em; 
+    height: 6.0em;
+    border: 2px solid #fff;
+    border-radius: 0.8em;
+    float: left;
+}
+
+#profile_username_rd {
+    position: relative;
+    margin-left: 6.8em;
+    top: 3.4em;
+}
+
+#p_username_rd {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: #fff;
+}
+
+#p_mail_rd {
+    font-size: 0.6em;
+    color: #e6e6e6;
+}
+
+.equipment_rd {
+    color: #3498db !important;
+    font-weight: 700;
+    padding-right: 1.0em;
+    border-right: 1px solid #3498db;
+    padding-left: 1.0em;
+    border-left: 1px solid #3498db;
+}
+
+.equipment_rd:hover {
+    text-decoration: none;
+}
+
+.s_equipment_rd {
+    position: relative;
+    top: 0.5em;
+    margin-left: 1.0em;
+}
+/*--------------------------------------------*/
+
+/*equipment*/
+.content_header {
+    background-color: #f6f7f8;
+    border: 1px solid #dfe0e4;
+    border-bottom: 0px;
+    padding: 1.0em;
+    font-size: 1.5em;
+    font-weight: 400;
+}
+.content_box{
+	background-color: #fff;
+	border: 1px solid #dfe0e4;
+	border-bottom: 2px solid #d0d1d5;
+    padding: 1.0em;
+}
+
+.content_box ul{
+    padding: 0em;
+    margin: 0em;
+    padding-bottom: 2.0em;
+}
+
+.content_box li{
+    list-style-type: none;
+    padding-top: 1.0em;
+}
+
+.h_equipment {
+    font-size: 1.3em;
+    color: #3498db !important;
+    margin: 0em;
+}
+
 /*--------------------------------------------*/
 
 /*friends*/
@@ -416,6 +564,21 @@ clear:left;
 }
 
 /*--------------------------------------------*/
+@media screen and (max-width: 850px) {
+    #profile_banner {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 680px) {
+    #p_h {
+        display: none;
+    }
+    #p_e {
+        display: none;
+    }
+}
+
 @media screen and (max-width: 580px) {
     div#menu_right {
         display: none;
@@ -424,6 +587,9 @@ clear:left;
     
 @media screen and (max-width: 460px) {
     div#menu {
+        display: none;
+    }
+    div#profile_header {
         display: none;
     }
 }
@@ -436,6 +602,9 @@ clear:left;
 
 @media screen and (min-width: 460px) {
     div#menu_mobile {
+        display: none;
+    }
+    div#profile_header_rd {
         display: none;
     }
 }
