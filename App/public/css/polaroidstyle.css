@@ -490,20 +490,39 @@ clear:left;
     font-size: 1.5em;
     font-weight: 400;
 }
-.content_box{
+.content_box {
 	background-color: #fff;
 	border: 1px solid #dfe0e4;
 	border-bottom: 2px solid #d0d1d5;
     padding: 1.0em;
 }
 
-.content_box ul{
+.content_box table {
+    width: 100%;
+    text-align: left;
+    border: 0px;
+    border-collapse: collapse;
+}
+
+.content_box td, th {
+    padding-top: 1.0em;
+    padding-bottom: 0.2em;
+    border-bottom:1px solid #bbb;
+    width: 33%;
+}
+
+.table_right {
+    text-align: right;
+    padding-right: 1.0em;
+}
+
+.content_box ul {
     padding: 0em;
     margin: 0em;
     padding-bottom: 2.0em;
 }
 
-.content_box li{
+.content_box li {
     list-style-type: none;
     padding-top: 1.0em;
 }
