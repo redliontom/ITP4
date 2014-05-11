@@ -49,8 +49,26 @@ body.no-touch .boxInner:hover .titleBox, body.touch .boxInner.touchFocus .titleB
 }
 
 .titleCat { 
+    float: left;
     font-size: 1.5em;
     font-weight: 400;
+    margin-left: 8%;
+    margin-top: 35%;
+}
+
+.titlePhoto {
+    float: left;
+    font-size: 0.8em;
+    font-weight: 300;
+    color: #bbb;
+}
+
+.arrow {
+    float: right;
+    font-size: 3.0em;
+    color: #3498db !important;
+    margin-right: 8%;
+    margin-top: 35%;
 }
 
 @media only screen and (max-width : 480px) {
