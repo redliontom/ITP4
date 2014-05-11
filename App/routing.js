@@ -1,5 +1,6 @@
 var DB = require('./modules/DB');
 var fs = require('fs');
+var mail = require("nodemailer");
 
 module.exports = function(app) {
 	app.get('/', function (request, response) {
@@ -29,6 +30,11 @@ module.exports = function(app) {
 	});
 	app.all('/logout-link', function (request, response) {
 		linkLogout(request, response);
+	});
+
+	app.all('/account/reset', function (request, response) {
+		console.log(request.query);
+		reset(request, response);
 	});
 };
 
@@ -95,7 +101,42 @@ function signup (request, response)
 
 function forgot (request, response)
 {
-	// TODO: sende mail udgl
+	//Pickup transport method saves mail to a local directory
+	var transport = mail.createTransport("PICKUP",{
+	    directory: require('path').dirname(require.main.filename)+"\\mails"
+	});
+
+	var body = request.body;
+	DB.getUserByMail(body.mail, function(error, result){
+		if (error){
+			logfile('error.log', error);
+		} else {
+			//Send reset mail
+			var mailOptions = {
+			    from: "itp4@mail.at",
+			    to: result.rows['email'],
+			    subject: "Password forget!",
+			    text: 'Follow the link to reset your password: http://127.0.0.1:8888/account/reset?id='+result.rows[0]['pk_user']+'&username'+result.rows[0]['username']+'=&key='+result.rows[0]['password'] 
+			}
+			transport.sendMail(mailOptions);
+		}
+	});
+};
+
+function reset (request, response){
+	var params = request.query;
+	console.log(params['id']);
+
+	if (params['id'] != 1){
+		var body = request.body;
+
+		DB.changePassword(body.password, params.id, function (error, result) {
+			if (error){
+				logfile('error.log', error);
+				response.redirect('/');
+			}
+		});
+	}
 };
 
 function linkForgot (request, response)

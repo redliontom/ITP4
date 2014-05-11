@@ -50,3 +50,33 @@ exception
 end
 $$ language plpgsql;
 
+create or replace function func_get_user_by_mail(_mail text)
+	returns table (
+		pk_user int, 
+		email text, 
+		password text,
+		forename text,
+		surname text,
+		status boolean 
+	) 
+	as $$
+begin
+	return query 
+		select u.pk_user, u.email, u.password, u.forename, u.surname, u.status 
+		from public.user as u 
+		where u.email = _mail;
+end
+$$language plpgsql
+
+
+create or replace function func_change_password(_password text, _pk_user int)
+	returns boolean
+	as $$
+begin
+	update public.user set password = crypt(_password, gen_salt('bf', 8)) where pk_user = _pk_user;
+	return true;
+exception
+	when unique_violation then
+	return false;
+end
+$$language plpgsql

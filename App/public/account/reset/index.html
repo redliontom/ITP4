@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Polaroid</title>
+	
+	<link href='../../css/polaroidstyle.css' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Lato:300,400,700,900,300italic,400italic,700italic,900italic' rel='stylesheet' type='text/css'>
+	<link href='http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css' rel='stylesheet' type='text/css'>
+</head>
+<body OnLoad="document.signup.first.focus();">
+	<div class="error"></div>
+	<div id="box">
+		<div id="box_content">
+			<header id="index_header">
+				<h2><i class="fa fa-edit"></i> Change your password!</h2>
+				<hr class="gray" >
+			</header>
+			<form role="form" name="reset" accept-charset="utf-8" onsubmit="return validateSignup()" method="post" action="">
+				<input class="input_text" type="password" name="password" value="" placeholder="Password">
+				<input class="input_text" type="password" name="confirmpassword" value="" placeholder="Confirm password">
+				<p>
+					<button class="button_submit" type="submit" name="submit">Save</button>
+				</p>
+			</form>
+		</div>
+		<footer id="index_footer">
+			polaroid © <script>document.write(new Date().getFullYear())</script> - English
+		</footer>
+	</div>
+	<script src="../../js/error_validation.js"></script>
+	<footer class="start">
+		<i class="fa fa-html5"></i> <i class="fa fa-css3"></i>
+	</footer>
+</body>
+</html> 

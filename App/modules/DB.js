@@ -59,6 +59,39 @@ exports.checkUser = function (username, password, callback) {
 	});
 };
 
+exports.getUserByMail = function(mail, callback){
+	mail = sanitizer.sanitize(mail);
+
+	pg.connect(conString, function(error, client, done){
+		var query = client.query('select * FROM func_get_user_by_mail($1)', [mail], function(error, result){
+			if (error){
+				callback(error, null);
+				done();
+			}else{
+				callback(null, result);
+				done();
+			}
+		});
+	});
+}
+
+exports.changePassword = function(password, id, callback){
+	password = sanitizer.sanitize(password);
+	id = sanitizer.sanitize(id);
+
+	pg.connect(conString, function(error, client, done){
+		var query = client.query('select func_change_password($1, $2) as retval', [password, id], function (error, result){
+			if (error){
+				callback(error, null);
+				done();
+			}else{
+				callback(null, result);
+				done();
+			}
+		});
+	});
+}
+
 //Test
 exports.login('testuser', 'password', function(e) {
 	//console.log(e);
