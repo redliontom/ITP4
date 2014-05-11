@@ -18,7 +18,7 @@ $(document).ready(function() {
                $("#content_container").animate({opacity:"1", filter:"alpha(opacity=100)"}, 200);
             });
         });
-        document.getElementById("subsection").innerHTML="Gallery";
+        document.getElementById("subsection").innerHTML="Gallery Categories";
         profile();
     });
     
@@ -63,7 +63,7 @@ $(document).ready(function() {
                $("#content_container").animate({opacity:"1", filter:"alpha(opacity=100)"}, 200);
             });
         });
-        document.getElementById("subsection").innerHTML="Gallery";
+        document.getElementById("subsection").innerHTML="Gallery Categories";
         profile();
     });
     
