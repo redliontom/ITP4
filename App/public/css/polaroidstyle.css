@@ -536,6 +536,41 @@ clear:left;
 /*--------------------------------------------*/
 
 /*friends*/
+.input_friends {
+	border: 1px solid #ccc;
+	border-radius: 0.2em; /* 3px / 16px */
+	box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.075) inset;
+	font-family: 'Lato',sans-serif;
+	font-size: 0.8em; 
+	font-weight: 300;
+	padding: 0.4em; /* 6px / 16px */
+	width: 75%;
+	margin-bottom: 0.4em;
+}
+
+.input_friends:focus {  
+	border-color: #66AFE9;
+	outline: 0px none;
+	box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(102, 175, 233, 0.6);
+}  
+
+.button_friends {
+	background: #3498db;
+	border: 1px solid #0c6ebe;
+	border-radius: 0.2em; /* 3px / 16px */
+	
+	font-family: 'Lato',sans-serif;
+	font-size: 0.8em; /* 16px / 16px */
+	font-weight: 300;
+	color: #fff;
+	padding: 0.2em 1.5em; /* 6px / 16px */
+	cursor: pointer;
+}
+
+.button_friends:hover {
+	background: #0af;
+}
+
 .friends{
 	background-color: #fff;
 	border: 1px solid #dfe0e4;
