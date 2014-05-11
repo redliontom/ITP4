@@ -58,22 +58,22 @@ body.no-touch .boxInner:hover .titleBox, body.touch .boxInner.touchFocus .titleB
 
 .titleCat { 
     float: left;
-    font-size: 1.5em;
+    font-size: 1.2em;
     font-weight: 400;
     margin-left: 8%;
-    margin-top: 3%;
+    margin-top: 5%;
 }
 
 .titlePhoto {
     float: left;
-    font-size: 0.8em;
+    font-size: 0.6em;
     font-weight: 300;
     color: #bbb;
 }
 
 .arrow {
     float: right;
-    font-size: 3.0em;
+    font-size: 2.5em;
     color: #3498db !important;
     margin-right: 8%;
     margin-top: 3%;

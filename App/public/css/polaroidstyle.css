@@ -578,14 +578,19 @@ clear:left;
 }
 .box_friendsInner {
     position: absolute;
-    left: 10px;
-    right: 10px;
+    left: 2px;
+    right: 2px;
     top: 10px;
     bottom: 10px;
     overflow: hidden;
-    background-color: #f6f7f8;
+    background-color: #fff;
     border: 1px solid #d0d1d5;
     border-bottom: 2px solid #d0d1d5;
+}
+
+.box_search {
+    border-bottom: 2px solid #d0d1d5;
+    margin-bottom: 1.0em;
 }
 /*--------------------------------------------*/
 @media screen and (max-width: 850px) {
