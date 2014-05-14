@@ -80,3 +80,39 @@ exception
 	return false;
 end
 $$language plpgsql
+
+
+create or replace function func_verify_oauth(_oauth_id text)
+	returns int
+	as $$
+begin
+	return (select count(*) from public.user where oauth_id = _oauth_id); 
+end
+$$language plpgsql
+
+
+create or replace function func_register_user_oauth( 
+					_email text,
+					_username text,
+					_forename text,
+					_surname text,
+					_oauth_id text
+					)
+	returns boolean
+	as $$
+begin
+	insert into public.user(email,username,forename,surname,status, oauth_id) 
+		values (
+			_email,
+			_username,
+			_forename,
+			_surname,
+			true,
+			_oauth_id
+			);
+	return true;
+exception
+	when unique_violation then
+	return false;
+end
+$$ language plpgsql;

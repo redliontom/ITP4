@@ -7,6 +7,18 @@
 	<link href='css/polaroidstyle.css' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=Lato:300,400,700,900,300italic,400italic,700italic,900italic' rel='stylesheet' type='text/css'>
 	<link href='http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css' rel='stylesheet' type='text/css'>
+
+	<script src='//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js'></script>
+	<script type="text/javascript">
+    (function () {
+      var po = document.createElement('script');
+      po.type = 'text/javascript';
+      po.async = true;
+      po.src = 'https://plus.google.com/js/client:plusone.js?onload=start';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(po, s);
+    })();
+  </script>
 </head>
 <body OnLoad="document.login.username.focus();">
 	<div class="error"></div>
@@ -30,12 +42,50 @@
 					<a href="/create-link">Create Your Account</a>
 				</span>
 			</form>
+			<div id="signinButton">
+			  <span class="g-signin"
+			    data-scope="https://www.googleapis.com/auth/plus.login"
+			    data-clientid="1024308178797-54unkca3bga8f4palj4fvh6ulibag5mr.apps.googleusercontent.com"
+			    data-redirecturi="postmessage"
+			    data-accesstype="offline"
+			    data-cookiepolicy="single_host_origin"
+			    data-callback="signInCallback">
+			  </span>
+			</div>
 		</div>
 		<footer id="index_footer">
 			polaroid © <script>document.write(new Date().getFullYear())</script> - English
 		</footer>
 	</div>
 	<script src="js/error_validation.js"></script>
+	<script type="text/javascript">
+		function signInCallback(authResult) {
+		  if (authResult['code']) {
+
+		    // Nach der Autorisierung des Nutzers nun die Anmeldeschaltfläche ausblenden, zum Beispiel:
+		    $('#signinButton').attr('style', 'display: none');
+
+		    // Senden des Codes an den Server.
+		    $.ajax({
+		      type: 'POST',
+		      url: 'http://localhost:8888/gpauth',
+		      contentType: 'application/json; charset=utf-8',
+		      success: function(result) {
+		        // Behandeln oder Verifizieren der Serverantwort, falls erforderlich.
+		        console.log(result);
+		      },
+		      processData: false,
+		      data: JSON.stringify({'code': authResult['code']})
+		    });
+		  } else if (authResult['error']) {
+		    // Es gab einen Fehler.
+		    // Mögliche Fehlercodes:
+		    //   "access_denied" – Der Nutzer hat den Zugriff für Ihre App abgelehnt.
+		    //   "immediate_failed" – Automatische Anmeldung des Nutzers ist fehlgeschlagen.
+		     console.log('Es gab einen Fehler: ' + authResult['Fehler']);
+		  }
+		}
+		</script>
 	<footer class="start">
 		<i class="fa fa-html5"></i> <i class="fa fa-css3"></i>
 	</footer>

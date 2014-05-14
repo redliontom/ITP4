@@ -90,7 +90,43 @@ exports.changePassword = function(password, id, callback){
 			}
 		});
 	});
-}
+};
+
+exports.checkOAuth = function(oauth, callback){
+	oauth = sanitizer.sanitize(oauth);
+
+	pg.connect(conString, function(error, client, done){
+		var query = client.query('select func_verify_oauth($1) as retval', [oauth], function(error, result){
+			if (error){
+				callback(error, result);
+				done();
+			}else{
+				callback(null, result);
+				done();
+			}
+		});
+	});
+};
+
+exports.signUpOAuth = function(first, last, user, mail, oauth, callback) {
+	first = sanitizer.sanitize(first);
+	last = sanitizer.sanitize(last);
+	user = sanitizer.sanitize(user);
+	mail = sanitizer.sanitize(mail);
+	oauth = sanitizer.sanitize(oauth);
+
+	pg.connect(conString, function (error, client, done) {
+		var query = client.query('select func_register_user_oauth($1, $2, $3, $4, $5) as retval', [mail, user, first, last, oauth], function (error, result) {
+			if (error) {
+				callback(error, null);
+				done();
+			} else {
+				callback(null, result);
+				done();
+			}
+		});
+	});
+};
 
 //Test
 exports.login('testuser', 'password', function(e) {

@@ -1,6 +1,9 @@
 var DB = require('./modules/DB');
 var fs = require('fs');
 var mail = require("nodemailer");
+var readline = require('readline');
+var googleapis = require('googleapis'),
+    OAuth2 = googleapis.auth.OAuth2;
 
 module.exports = function(app) {
 	app.get('/', function (request, response) {
@@ -18,7 +21,15 @@ module.exports = function(app) {
 	app.post('/account/forgot', function (request, response) {
 		forgot(request, response);
 	});
-
+	app.get('/account/reset', function (request, response) {
+		linkreset(request, response);
+	});
+	app.post('/account/reset', function (request, response) {
+		linkreset(request, response);
+	});
+	app.post('/gpauth', function (request, response) {
+		oauth(request, response);
+	});
 	app.all('/forgot-link', function (request, response) {
 		linkForgot(request, response);
 	});
@@ -30,11 +41,6 @@ module.exports = function(app) {
 	});
 	app.all('/logout-link', function (request, response) {
 		linkLogout(request, response);
-	});
-
-	app.all('/account/reset', function (request, response) {
-		console.log(request.query);
-		reset(request, response);
 	});
 };
 
@@ -123,11 +129,11 @@ function forgot (request, response)
 	});
 };
 
-function reset (request, response){
+function linkreset (request, response){
 	var params = request.query;
 	console.log(params['id']);
 
-	if (params['id'] != 1){
+	if (params['id']){
 		var body = request.body;
 
 		DB.changePassword(body.password, params.id, function (error, result) {
@@ -253,5 +259,68 @@ function logfile (path, message)
 			var buffer = new Buffer(message + '\n', 'utf8');
 			fs.writeSync(fd, buffer, 0, buffer.length, null);
 		}
+	});
+};
+
+function oauth(request, response){
+	var client;
+
+	var clientId = '1024308178797-54unkca3bga8f4palj4fvh6ulibag5mr.apps.googleusercontent.com';
+	var clientSecret = 'sKGpMy0gSNXtCFJj-PMSBzZU';
+	var redirectUrl = 'postmessage';
+	var scope = 'https://www.googleapis.com/auth/plus.login';
+
+	googleapis
+		.discover( 'plus', 'v1' )
+		.execute( function(err,data){
+			client = data;
+		});
+
+	var oauth2 = new googleapis.OAuth2Client(clientId, clientSecret, redirectUrl);
+
+	oauth2.getToken(request.body.code, function(err, tokens){
+		oauth2.credentials = tokens;
+		client.plus.people.get({
+			userId: 'me'
+		}).withAuthClient(oauth2)
+		  .execute(function(err, gpResult){
+		  	if (gpResult){
+				DB.checkOAuth(gpResult.id, function(error, result){
+					if (error){
+						logfile('error.log', error);
+					}else{
+						if (result.rows[0].retval == 1){
+							response.cookie('polaroidRememberUser', gpResult.nickname);
+							response.cookie('polaroidRememberHash', gpResult.id);
+
+							request.session.polaroidUser = gpResult.nickname;
+							request.session.polaroidHash = gpResult.id;
+							response.redirect('/account');
+
+							logfile('info.log', 'user \'' + gpResult.nickname + '\' logged in via google');
+						}else{
+							DB.signUpOAuth(gpResult.name.givenName, gpResult.name.familyName, gpResult.nickname, gpResult.emails, gpResult.id, function (error, result) {
+								if (error) {
+									remember(request, response);
+								} else {
+									createUserDir(gpResult.nickname);
+
+									response.cookie('polaroidRememberUser', gpResult.nickname);
+									response.cookie('polaroidRememberHash', gpResult.id);
+
+									request.session.polaroidUser = gpResult.nickname;
+									request.session.polaroidHash = gpResult.id;
+									response.redirect('/account');
+
+									logfile('info.log', 'user \'' + gpResult.nickname + '\' registered via google');
+								}
+							});
+						}
+					}
+				});
+			}else{
+				console.log(err);
+			}
+		});
 	});
 };
