@@ -100,6 +100,7 @@ $(document).ready(function() {
         document.getElementById("subsection").innerHTML="Settings";
         profile();
     });
+    
 });
 
 
