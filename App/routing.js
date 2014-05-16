@@ -178,10 +178,11 @@ function linkLogin (request, response)
 
 function linkLogout (request, response)
 {
-	request.session = null;
+	request.session.polaroidUser = null;
+	request.session.polaroidHash = null;
 	response.cookie('polaroidRememberUser', null);
 	response.cookie('polaroidRememberHash', null);
-	response.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+	//response.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
 	response.redirect('/');
 };
 
@@ -198,7 +199,7 @@ function rememberRedirect (request, response)
 		} else {
 			response.set('error', 1);
 			response.redirect('/');
-			logfile('info.log', 'user tried to log in');
+			logfile('info.log', 'user tried to login');
 		}
 	});
 };
@@ -214,7 +215,7 @@ function remember (request, response)
 			logfile('info.log', 'user logged in');
 		} else {
 			response.status(200).sendfile('./App/public/index.html'); console.log('false');
-			logfile('info.log', 'user tried to log in');
+			logfile('info.log', 'user tried to login');
 		}
 	});
 };
