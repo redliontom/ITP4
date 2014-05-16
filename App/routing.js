@@ -6,6 +6,22 @@ var googleapis = require('googleapis'),
     OAuth2 = googleapis.auth.OAuth2;
 
 module.exports = function(app) {
+	app.all('*', function (request, response, next) {
+		// no cache
+		response.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+		response.set('Pragma', 'no-cache');
+
+		if (request.protocol == 'http') {
+			if (app.get('host') == 'localhost') {
+				response.redirect('https://' + request.host + ':' + app.get('https-port') + request.path);
+			} else {
+				response.redirect('https://' + request.host + request.path);
+			}
+		} else {
+			next();
+		}
+	});
+
 	app.get('/', function (request, response) {
 		login(request, response);
 	});
