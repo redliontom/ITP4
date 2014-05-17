@@ -166,6 +166,10 @@ a:visited {
 	margin-left: 1.0em;
 }
 
+.google_button {
+    float: right;
+}
+
 footer.start {
 	position: absolute;
 	width: 98%;
