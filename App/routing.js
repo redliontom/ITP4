@@ -17,7 +17,7 @@ module.exports = function (app) {
 		response.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
 		response.set('Pragma', 'no-cache');
 
-		// TODO: Nächste Zeile löschen und alles die Kommentare ab 'if' löschen sodass zu 'https' weitergeileitet wird.
+		// TODO: Nächste Zeile löschen und die Kommentare ab 'if' löschen sodass zu 'https' weitergeileitet wird.
 		return next();
 
 		/*if (request.secure) {
@@ -62,6 +62,21 @@ module.exports = function (app) {
 	});
 };
 
+function logfile(path, message) {
+	return console.log(path + ': ' + message);
+	// TODO: vor Auslieferung das return löschen
+
+	fs.open(path, 'a', 0666, function (error, fd) {
+		if (error) {
+			console.log(error);
+			console.log(message);
+		} else {
+			var buffer = new Buffer(message + '\n', 'utf8');
+			fs.writeSync(fd, buffer, 0, buffer.length, null);
+		}
+	});
+}
+
 function createUserDir(username) {
 	// __dirname = <workingdir>/App
 	fs.mkdir(__dirname + '/public/account/users/' + username, 0660, function (error) {
@@ -74,11 +89,11 @@ function createUserDir(username) {
 }
 
 function createAuthSession(request, response, username, password, cookie) {
-	// TODO: Cookies erstellen, hat jedoch im Moment keine hohe Priorität
+	// TODO: Cookies erstellen, hat im Moment jedoch keine hohe Priorität.
 }
 
 function destroyAuthSession(request, response, next) {
-
+	// TODO: Cookies und Session löschen, hat im Moment jedoch keine hohe Priorität.
 }
 
 function remember(request, response, next) {
@@ -150,6 +165,8 @@ function signup(request, response, next) {
 }
 
 function forgot(request, response, next) {
+	console.log('forgot');
+
 	try {
 		//Pickup transport method saves mail to a local directory
 		var transport = mail.createTransport("PICKUP", {
@@ -193,6 +210,8 @@ function forgot(request, response, next) {
 }
 
 function reset(request, response, next) {
+	console.log('reset');
+
 	try {
 		var params = request.query;
 		console.log(params['id']);
@@ -215,23 +234,9 @@ function reset(request, response, next) {
 	}
 }
 
-function logfile(path, message) {
-	console.log(path + ': ' + message);
-	return;
-	// TODO: vor auslieferung das return löschen
-
-	fs.open(path, 'a', 0666, function (error, fd) {
-		if (error) {
-			console.log(error);
-			console.log(message);
-		} else {
-			var buffer = new Buffer(message + '\n', 'utf8');
-			fs.writeSync(fd, buffer, 0, buffer.length, null);
-		}
-	});
-}
-
 function oauth(request, response, next) {
+	console.log('oauth');
+
 	var client;
 
 	var clientId = '1024308178797-54unkca3bga8f4palj4fvh6ulibag5mr.apps.googleusercontent.com';
