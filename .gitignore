@@ -1,3 +1,7 @@
+# specific
+mails/*.eml
+App/users/*
+
 # Windows
 Thumbs.db
 ehthumbs.db
