@@ -79,7 +79,7 @@ function logfile(path, message) {
 
 function createUserDir(username) {
 	// __dirname = <workingdir>/App
-	fs.mkdir(__dirname + '/public/account/users/' + username, 0660, function (error) {
+	fs.mkdir(__dirname + '/' + username, 0660, function (error) {
 		if (error) {
 			logfile('error.log', error);
 		} else {

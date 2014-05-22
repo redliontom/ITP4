@@ -8,17 +8,22 @@ var path = __dirname + '/App/public';
 var routing = require('./App/routing');
 
 var sha1 = crypto.createHash('sha1');
+var hash = null;
 
-sha1.update('polaroid luxembourg photo club');
+sha1.update('polaroid luxembourg photo club'); // TODO: Zeile vor Implementierung abändern.
+hash = sha1.digest('hex');
 
 app.set('port', 8080);
 app.set('host', 'localhost');
 
-//app.use(express.logger());
 app.use(require('body-parser')());
-app.use(require('cookie-parser')());
+app.use(require('cookie-parser')(hash));
 app.use(require('cookie-session')({
-	secret: sha1.digest('hex')
+	secret: hash
+}));
+app.use(require('express-session')({
+	secret: hash
+	/*cookie: { secure: true }*/
 }));
 //app.use(app.router);
 
