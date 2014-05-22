@@ -264,15 +264,8 @@ function oauth(request, response, next) {
 		  				logfile('error.log', error);
 		  				return next();
 		  			} else {
-		  				var sum = hashUser(request.body.username, result.rows[0].retval);
-
 		  				if (result.rows[0].retval == 1) {
-		  					var sum = hashUser(gpResult.nickname, gpResult.id);
-		  					var date = new Date(Date.now());
-
-		  					date.setFullYear(date.getFullYear() + 1);
-		  					response.cookie('polaroidPhotoClubUser', sum, { expires: date, secure: true });
-		  					request.session.polaroidPhotoClubUser = sum;
+		  					createAuthSession(request, response, gpResult.nickname, gpResult.id, true);
 		  					logfile('info.log', 'user \'' + gpResult.nickname + '\' logged in via google');
 		  					response.redirect('/account');
 		  				} else {
@@ -280,13 +273,7 @@ function oauth(request, response, next) {
 		  						if (error) {
 		  							return next();
 		  						} else {
-		  							var sum = hashUser(gpResult.nickname, gpResult.id);
-		  							var date = new Date(Date.now());
-
-		  							date.setFullYear(date.getFullYear() + 1);
-		  							response.cookie('polaroidPhotoClubUser', sum, { expires: date, secure: true });
-		  							request.session.polaroidPhotoClubUser = sum;
-		  							createUserDir(gpResult.nickname);
+		  							createAuthSession(request, response, gpResult.nickname, gpResult.id, true);
 		  							logfile('info.log', 'user \'' + gpResult.nickname + '\' logged in via google');
 		  							response.redirect('/account');
 		  						}
