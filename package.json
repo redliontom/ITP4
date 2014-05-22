@@ -8,6 +8,7 @@
     "cookie-parser": "^1.1.0",
     "cookie-session": "^1.0.2",
     "express": "^4.3.0",
+    "express-session": "^1.2.0".
     "googleapis": "~0.7.0",
     "nodemailer": "~0.6.5",
     "sanitizer": "~0.1.1",
