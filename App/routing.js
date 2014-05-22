@@ -180,24 +180,31 @@ function forgot(request, response, next) {
 				if (error) {
 					logfile('error.log', error);
 				} else {
-					//Send reset mail
-					var domain = null;
+					console.log(result.rows[0]);
+					if (result.rows[0]){
+						//Send reset mail
+						var domain = null;
 
-					if (request.host == 'localhost' || request.host == '127.0.0.1') {
-						domain = request.protocol + '://' + request.host + ':8080';
-					} else {
-						domain = request.protocol + '://' + request.host;
+						if (request.host == 'localhost' || request.host == '127.0.0.1') {
+							domain = request.protocol + '://' + request.host + ':8080';
+						} else {
+							domain = request.protocol + '://' + request.host;
+						}
+
+						var pw = result.rows[0]['password'];
+						var key = crypto.createHash('md5').update(pw).digest('hex');
+						var mailOptions = {
+							from: "noreply@polaroidphotoclub.lu",
+							to: result.rows['email'],
+							subject: "Password forget!",
+							text: 'Follow the link to reset your password: ' + domain + '/account/reset?id=' + result.rows[0]['pk_user'] + '&username' + result.rows[0]['username'] + '=&key=' + key
+						}
+
+						transport.sendMail(mailOptions);
+						response.redirect('/');
+					}else{
+						response.redirect('/account/forgot');
 					}
-
-					var mailOptions = {
-						from: "noreply@polaroidphotoclub.lu",
-						to: result.rows['email'],
-						subject: "Password forget!",
-						text: 'Follow the link to reset your password: ' + domain + '/account/reset?id=' + result.rows[0]['pk_user'] + '&username' + result.rows[0]['username'] + '=&key=' + result.rows[0]['password']
-					}
-
-					transport.sendMail(mailOptions);
-					response.redirect('/');
 				}
 			});
 		} else {
@@ -212,9 +219,9 @@ function forgot(request, response, next) {
 function reset(request, response, next) {
 	console.log('reset');
 
+	//TO-DO: Prüfen der Parameter, um das ändern beliebiger Passwörter zu unterbinden
 	try {
 		var params = request.query;
-		console.log(params['id']);
 
 		if (params['id']) {
 			var body = request.body;
@@ -227,6 +234,8 @@ function reset(request, response, next) {
 
 				response.redirect('/account');
 			});
+		}else{
+			response.redirect('/');
 		}
 	} catch (e) {
 		logilfe('error.log', e);
@@ -268,6 +277,7 @@ function oauth(request, response, next) {
 		  					createAuthSession(request, response, gpResult.nickname, gpResult.id, true);
 		  					logfile('info.log', 'user \'' + gpResult.nickname + '\' logged in via google');
 		  					response.redirect('/account');
+
 		  				} else {
 		  					DB.signUpOAuth(gpResult.name.givenName, gpResult.name.familyName, gpResult.nickname, gpResult.emails, gpResult.id, function (error, result) {
 		  						if (error) {

@@ -54,6 +54,7 @@ $$ language plpgsql;
 create or replace function func_get_user_by_mail(_mail text)
 	returns table (
 		pk_user int, 
+		username text,
 		email text, 
 		password text,
 		forename text,
@@ -63,7 +64,7 @@ create or replace function func_get_user_by_mail(_mail text)
 	as $$
 begin
 	return query 
-		select u.pk_user, u.email, u.password, u.forename, u.surname, u.status 
+		select u.pk_user, u.username, u.email, u.password, u.forename, u.surname, u.status 
 		from public.user as u 
 		where u.email = _mail;
 end
