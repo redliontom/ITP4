@@ -143,6 +143,7 @@ function account(request, response, next) {
 }
 
 function signup(request, response, next) {
+	console.log('signup');
 	var body = request.body;
 
 	try {
