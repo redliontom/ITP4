@@ -24,6 +24,7 @@ begin
 end
 $$ language plpgsql;
 
+
 create or replace function func_register_user( 
 					_email text,
 					_password text,
@@ -66,7 +67,7 @@ begin
 		from public.user as u 
 		where u.email = _mail;
 end
-$$language plpgsql
+$$language plpgsql;
 
 
 create or replace function func_change_password(_password text, _pk_user int)
@@ -79,7 +80,7 @@ exception
 	when unique_violation then
 	return false;
 end
-$$language plpgsql
+$$language plpgsql;
 
 
 create or replace function func_verify_oauth(_oauth_id text)
@@ -88,7 +89,7 @@ create or replace function func_verify_oauth(_oauth_id text)
 begin
 	return (select count(*) from public.user where oauth_id = _oauth_id); 
 end
-$$language plpgsql
+$$language plpgsql;
 
 
 create or replace function func_register_user_oauth( 

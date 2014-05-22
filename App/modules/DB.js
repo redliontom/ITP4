@@ -8,7 +8,11 @@ exports.login = function(username, password, callback) {
 	username = sanitizer.sanitize(username);
 	password = sanitizer.sanitize(password);
 
-	pg.connect(conString, function (err, client, done)  {
+	pg.connect(conString, function (err, client, done) {
+		if (err) {
+			return callback(err, null);
+		}
+
 		var query = client.query('select func_verify_user($1, $2) as retval', [username, password], function (err, result) {
 			if(err) {
 				callback(err);
@@ -30,6 +34,10 @@ exports.signUp = function(first, last, user, mail, password, callback) {
 	password = sanitizer.sanitize(password);
 
 	pg.connect(conString, function (error, client, done) {
+		if (error) {
+			return callback(error, null);
+		}
+
 		var query = client.query('select func_register_user($1, $2, $3, $4, $5) as retval', [mail, password, user, first, last], function (error, result) {
 			if (error) {
 				callback(error, null);
@@ -42,19 +50,56 @@ exports.signUp = function(first, last, user, mail, password, callback) {
 	});
 };
 
-exports.checkUser = function (username, password, callback) {
-	username = sanitizer.sanitize(username);
-	password = sanitizer.sanitize(password);
-
+exports.addUserKey = function (user, hash, callback) {
 	pg.connect(conString, function (error, client, done) {
-		var query = client.query('select func_verify_user_cookie($1, $2) as retval', [username, password], function (error, result) {
+		if (error) {
+			return callback(error, null);
+		}
+
+		var query = client.query('select func_add_session_key($1, $2) as retval', [user, hash], function (error, result) {
+			done();
+
 			if (error) {
-				callback(error, null);
-				done();
-			} else {
-				callback(null, result);
-				done();
+				return callback(error, null);
 			}
+
+			callback(null, result);
+		});
+	});
+};
+
+exports.removeUserKey = function (hash, callback) {
+	pg.connect(conString, function (error, client, done) {
+		if (error) {
+			return callback(error, null);
+		}
+
+		var query = client.query('select func_remove_session_key($1) as retval', [hash], function (error, result) {
+			done();
+
+			if (error) {
+				return callback(error, null);
+			}
+
+			callback(null, result);
+		});
+	});
+};
+
+exports.checkUser = function (user, callback) {
+	pg.connect(conString, function (error, client, done) {
+		if (error) {
+			return callback(error, null);
+		}
+
+		var query = client.query('select func_check_session_key($1) as retval', [user], function (error, result) {
+			done();
+
+			if (error) {
+				return callback(error, null);
+			}
+
+			callback(null, result);
 		});
 	});
 };
@@ -62,7 +107,11 @@ exports.checkUser = function (username, password, callback) {
 exports.getUserByMail = function(mail, callback){
 	mail = sanitizer.sanitize(mail);
 
-	pg.connect(conString, function(error, client, done){
+	pg.connect(conString, function (error, client, done) {
+		if (error) {
+			return callback(error, null);
+		}
+
 		var query = client.query('select * FROM func_get_user_by_mail($1)', [mail], function(error, result){
 			if (error){
 				callback(error, null);
@@ -79,7 +128,11 @@ exports.changePassword = function(password, id, callback){
 	password = sanitizer.sanitize(password);
 	id = sanitizer.sanitize(id);
 
-	pg.connect(conString, function(error, client, done){
+	pg.connect(conString, function (error, client, done) {
+		if (error) {
+			return callback(error, null);
+		}
+
 		var query = client.query('select func_change_password($1, $2) as retval', [password, id], function (error, result){
 			if (error){
 				callback(error, null);
@@ -95,7 +148,11 @@ exports.changePassword = function(password, id, callback){
 exports.checkOAuth = function(oauth, callback){
 	oauth = sanitizer.sanitize(oauth);
 
-	pg.connect(conString, function(error, client, done){
+	pg.connect(conString, function (error, client, done) {
+		if (error) {
+			return callback(error, null);
+		}
+
 		var query = client.query('select func_verify_oauth($1) as retval', [oauth], function(error, result){
 			if (error){
 				callback(error, result);
@@ -116,6 +173,10 @@ exports.signUpOAuth = function(first, last, user, mail, oauth, callback) {
 	oauth = sanitizer.sanitize(oauth);
 
 	pg.connect(conString, function (error, client, done) {
+		if (error) {
+			return callback(error, null);
+		}
+
 		var query = client.query('select func_register_user_oauth($1, $2, $3, $4, $5) as retval', [mail, user, first, last, oauth], function (error, result) {
 			if (error) {
 				callback(error, null);
@@ -129,6 +190,6 @@ exports.signUpOAuth = function(first, last, user, mail, oauth, callback) {
 };
 
 //Test
-exports.login('testuser', 'password', function(e) {
+/*exports.login('testuser', 'password', function(e) {
 	//console.log(e);
-});
+});*/
