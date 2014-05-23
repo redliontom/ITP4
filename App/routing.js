@@ -124,9 +124,7 @@ function checkAuthSession(request, response, next) {
 function createAuthSession(request, response, next, username, cookie) {
 	console.log('createAuthSession');
 
-	var sha1 = crypto.createHash('sha1');
-
-	// TODO: Node.js wird die Crypto API sehr wahrscheinlich umschreiben. Bei Updates muss darauf geachtet werden.
+	// INFO: Node.js wird die Crypto API sehr wahrscheinlich umschreiben. Bei Updates muss darauf geachtet werden.
 	crypto.randomBytes(512, function (error, result) {
 		console.log('series');
 		if (error) {
@@ -134,6 +132,7 @@ function createAuthSession(request, response, next, username, cookie) {
 			return next(); // TODO: Sende error an den client
 		}
 
+		var sha1 = crypto.createHash('sha1');
 		sha1.update(result, 'binary');
 		var series = sha1.digest('hex');
 
@@ -390,6 +389,7 @@ function oauth(request, response, next) {
 function upload(request, response, next) {
 	console.log('upload');
 
+	// TODO: Upload implementieren.
 	try {
 		return next();
 		var body = request.body;
