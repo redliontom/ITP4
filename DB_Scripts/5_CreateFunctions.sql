@@ -118,3 +118,49 @@ exception
 	return false;
 end
 $$ language plpgsql;
+
+create or replace function func_create_auth_session(_username text, _series text, _token text)
+	returns boolean
+	as $$
+declare
+	_count integer := (select count(*) from public.auth_session where username = _username);
+begin
+	if (_count <= 0) then
+		insert into public.auth_session (username, series, token) values (_username, _series, _token);
+		return true;
+	end if;
+
+	update public.auth_session set valid = false where username = _username;
+	return false;
+end
+$$ language plpgsql;
+
+create or replace function func_destroy_auth_session(_username text)
+	returns boolean
+	as $$
+declare
+	_count integer := (select count(*) from public.auth_session where username = _username);
+begin
+	if (_count > 0) then
+		delete from public.auth_session where username = _username;
+		return true;
+	end if;
+
+	return false;
+end
+$$ language plpgsql;
+
+create or replace function func_check_auth_session(_username text, _series text, _token text)
+	returns boolean
+	as $$
+declare
+	_count integer := (select count(*) from public.auth_session where username = _username and series = _series and token = _token);
+begin
+	if (_count <= 0) then
+		update public.auth_session set valid = false where username = _username;
+		return false;
+	end if;
+
+	return true;
+end
+$$ language plpgsql;

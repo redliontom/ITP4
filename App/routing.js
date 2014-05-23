@@ -7,59 +7,34 @@ var googleapis = require('googleapis'),
     OAuth2 = googleapis.auth.OAuth2;
 
 module.exports = function (app) {
-	var goToHome = function (request, response, next) {
-		console.log('goToHome');
-		response.redirect('/');
-	};
-
-	app.route('*').all(function (request, response, next) {
-		// no cache
-		response.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
-		response.set('Pragma', 'no-cache');
-
-		// TODO: Nächste Zeile löschen und die Kommentare ab 'if' löschen sodass zu 'https' weitergeileitet wird.
-		return next();
-
-		/*if (request.secure) {
-			next();
-		} else {
-			if (request.host == 'localhost' || request.host == '127.0.0.1') {
-				response.redirect('https://' + request.host + ':' + app.get('port') + request.path);
-			} else {
-				response.redirect('https://' + request.host + request.path);
-			}
-		}*/
-	});
-
 	// html
-	app.route('/').all(remember, login, function (request, response) {
+	app.route('/')
+	.all(redirectToHttps, checkAuthSession, login, function (request, response) {
 		response.status(200).sendfile('./App/public/index.html');
 	});
-	app.route('/account').all(account, function (request, response) {
+	app.route('/account')
+	.all(redirectToHttps, checkAuthSession, account, function (request, response) {
 		response.status(200).sendfile('./App/public/account/index.html');
 	});
 	app.route('/account/signup')
-	.all(remember, signup, function (request, response) {
+	.all(redirectToHttps, checkAuthSession, signup, function (request, response) {
 		response.status(200).sendfile('./App/public/account/signup/index.html');
 	});
 	app.route('/account/forgot')
-	.all(remember, forgot, function (request, response) {
+	.all(redirectToHttps, checkAuthSession, forgot, function (request, response) {
 		response.status(200).sendfile('./App/public/account/forgot/index.html');
 	});
 	app.route('/account/reset')
-	.all(remember, reset, function (request, response) {
+	.all(redirectToHttps, checkAuthSession, reset, function (request, response) {
 		response.status(200).sendfile('./App/public/account/reset/index.html');
 	});
 	app.route('/gpauth')
-	.all(remember, oauth, function (request, response) {
+	.all(redirectToHttps, checkAuthSession, oauth, function (request, response) {
 		response.status(200).sendfile('./App/public/account/index.html');
 	});
 
 	// link
-	app.route('/logout').all(function (request, response) {
-		destroyAuthSession(request, response);
-		response.redirect('/');
-	});
+	app.route('/logout').all(redirectToHttps, logout);
 };
 
 function logfile(path, message) {
@@ -88,18 +63,119 @@ function createUserDir(username) {
 	});
 }
 
-function createAuthSession(request, response, username, password, cookie) {
-	// TODO: Cookies erstellen, hat im Moment jedoch keine hohe Priorität.
-}
+function redirectToHttps(request, response, next) {
+	console.log('redirectToHttps');
+	// no cache
+	response.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+	response.set('Pragma', 'no-cache');
 
-function destroyAuthSession(request, response, next) {
-	// TODO: Cookies und Session löschen, hat im Moment jedoch keine hohe Priorität.
-}
-
-function remember(request, response, next) {
-	// TODO: Code für die Cookie/Session abfrage hinzufügen wenn diese implementiert wurde.
-	console.log('remember');
+	// TODO: Nächste Zeile löschen und die Kommentare ab 'if' löschen sodass zu 'https' weitergeileitet wird.
 	return next();
+
+	/*if (request.secure) {
+		next();
+	} else {
+		if (request.host == 'localhost' || request.host == '127.0.0.1') {
+			response.redirect('https://' + request.host + ':' + app.get('port') + request.path);
+		} else {
+			response.redirect('https://' + request.host + request.path);
+		}
+	}*/
+}
+
+function checkAuthSession(request, response, next) {
+	console.log('checkAuthSession');
+	var cookies = request.cookies;
+
+	if (request.session.username) {
+		if (request.path != '/account') {
+			response.redirect('/account');
+		} else {
+			return next();
+		}
+	} else if (cookies.username && cookies.series && cookies.token) {
+		DB.checkAuthSession(cookies.username, cookies.series, cookies.token, function (error, result) {
+			if (error) {
+				return response.redirect('/');
+			} else if (result) {
+				request.session.username = cookies.username;
+				
+				if (request.path != '/account') {
+					response.redirect('/account');
+				} else {
+					return next();
+				}
+			} else {
+				return response.redirect('/');
+			}
+		});
+	} else if (request.path == '/') {
+		return next();
+	} else {
+		response.redirect('/');
+	}
+}
+
+function createAuthSession(request, response, next, username, cookie) {
+	console.log('createAuthSession');
+
+	var sha1 = crypto.createHash('sha1');
+
+	// TODO: Node.js wird die Crypto API sehr wahrscheinlich umschreiben. Bei Updates muss darauf geachtet werden.
+	crypto.randomBytes(512, function (error, result) {
+		console.log('series');
+		if (error) {
+			logfile('error.log', '"' + username + '" ' + error);
+			return next(); // TODO: Sende error an den client
+		}
+
+		sha1.update(result, 'binary');
+		var series = sha1.digest('hex');
+
+		crypto.randomBytes(512, function (error, result) {
+			console.log('token');
+			if (error) {
+				logfile('error.log', '"' + username + '" ' + error);
+				return next(); // TODO: Sende error an den client
+			}
+
+			sha1 = crypto.createHash('sha1');
+			sha1.update(result, 'binary');
+			var token = sha1.digest('hex');
+
+			DB.createAuthSession(username, series, token, function (error, result) {
+				console.log('DB');
+				if (error) {
+					logfile('error.log', '"' + username + '" ' + error);
+					return next(); // TODO: Sende error an den client
+				}
+
+				var date = new Date(Date.now());
+				date.setFullYear(date.getFullYear() + 10);
+
+				if (cookie && result) {
+					// TODO: Cookie option 'secure' auf TRUE setzen sobald HTTPS funktioniert.
+					response.cookie('username', username, { expires: date, signed: true/*, secure: true*/ });
+					response.cookie('series', series, { expires: date, signed: true/*, secure: true*/ });
+					response.cookie('token', token, { expires: date, signed: true/*, secure: true*/ });
+				}
+
+				request.session.username = username;
+				return response.redirect('/account');
+			});
+		});
+	});
+}
+
+function destroyAuthSession(request, response) {
+	DB.destroyAuthSession(request.session.username, function (error, result) {
+		if (error) {
+			logfile('error.log', error);
+		}
+
+		request.session = null;
+		response.redirect('/');
+	});
 }
 
 function login(request, response, next) {
@@ -112,17 +188,16 @@ function login(request, response, next) {
 					logfile('error.log', error);
 					return next();
 				} else {
-					if (result.rows[0].retval != "null") {
+					if (result != "null") {
 						createAuthSession(
 							request,
 							response,
+							next,
 							request.body.username,
-							request.body.password,
 							request.body.remember);
 						logfile('info.log', 'user \'' + request.body.username + '\' logged in');
-						response.redirect('/account');
 					} else {
-						logfile('info.log', 'user \'' + username + '\' tried to login');
+						logfile('info.log', 'user \'' + request.body.username + '\' tried to login');
 						return next();
 					}
 				}
@@ -136,8 +211,12 @@ function login(request, response, next) {
 	}
 }
 
+function logout(request, response, next) {
+	return destroyAuthSession(request, response);
+}
+
 function account(request, response, next) {
-	// TODO: Accountdaten übertragen wenn der login passt.
+	// TODO: Accountdaten übertragen wenn der Login passt.
 	console.log('account');
 	return next();
 }
@@ -181,8 +260,8 @@ function forgot(request, response, next) {
 				if (error) {
 					logfile('error.log', error);
 				} else {
-					console.log(result.rows[0]);
-					if (result.rows[0]){
+					console.log(result[0]);
+					if (result[0]){
 						//Send reset mail
 						var domain = null;
 
@@ -192,13 +271,13 @@ function forgot(request, response, next) {
 							domain = request.protocol + '://' + request.host;
 						}
 
-						var pw = result.rows[0]['password'];
+						var pw = result[0]['password'];
 						var key = crypto.createHash('md5').update(pw).digest('hex');
 						var mailOptions = {
 							from: "noreply@polaroidphotoclub.lu",
-							to: result.rows['email'],
+							to: result['email'],
 							subject: "Password forget!",
-							text: 'Follow the link to reset your password: ' + domain + '/account/reset?id=' + result.rows[0]['pk_user'] + '&username' + result.rows[0]['username'] + '=&key=' + key
+							text: 'Follow the link to reset your password: ' + domain + '/account/reset?id=' + result[0]['pk_user'] + '&username' + result[0]['username'] + '=&key=' + key
 						}
 
 						transport.sendMail(mailOptions);
@@ -274,19 +353,17 @@ function oauth(request, response, next) {
 		  				logfile('error.log', error);
 		  				return next();
 		  			} else {
-		  				if (result.rows[0].retval == 1) {
-		  					createAuthSession(request, response, gpResult.nickname, gpResult.id, true);
+		  				if (result == 1) {
+		  					createAuthSession(request, response, next, gpResult.nickname, true);
 		  					logfile('info.log', 'user \'' + gpResult.nickname + '\' logged in via google');
-		  					response.redirect('/account');
 
 		  				} else {
 		  					DB.signUpOAuth(gpResult.name.givenName, gpResult.name.familyName, gpResult.nickname, gpResult.emails, gpResult.id, function (error, result) {
 		  						if (error) {
 		  							return next();
 		  						} else {
-		  							createAuthSession(request, response, gpResult.nickname, gpResult.id, true);
+		  							createAuthSession(request, response, next, gpResult.nickname, true);
 		  							logfile('info.log', 'user \'' + gpResult.nickname + '\' logged in via google');
-		  							response.redirect('/account');
 		  						}
 		  					});
 		  				}

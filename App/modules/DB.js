@@ -19,7 +19,7 @@ exports.login = function(username, password, callback) {
 				done();
 			} else {
 				//console.log('%s', result.rows[0].retval);
-				callback(null, result);
+				callback(null, result.rows[0].retval);
 				done(); // Wichtig sonst werden Clients geleakt.
 			}
 		});
@@ -50,60 +50,6 @@ exports.signUp = function(first, last, user, mail, password, callback) {
 	});
 };
 
-exports.addUserKey = function (user, hash, callback) {
-	pg.connect(conString, function (error, client, done) {
-		if (error) {
-			return callback(error, null);
-		}
-
-		var query = client.query('select func_add_session_key($1, $2) as retval', [user, hash], function (error, result) {
-			done();
-
-			if (error) {
-				return callback(error, null);
-			}
-
-			callback(null, result);
-		});
-	});
-};
-
-exports.removeUserKey = function (hash, callback) {
-	pg.connect(conString, function (error, client, done) {
-		if (error) {
-			return callback(error, null);
-		}
-
-		var query = client.query('select func_remove_session_key($1) as retval', [hash], function (error, result) {
-			done();
-
-			if (error) {
-				return callback(error, null);
-			}
-
-			callback(null, result);
-		});
-	});
-};
-
-exports.checkUser = function (user, callback) {
-	pg.connect(conString, function (error, client, done) {
-		if (error) {
-			return callback(error, null);
-		}
-
-		var query = client.query('select func_check_session_key($1) as retval', [user], function (error, result) {
-			done();
-
-			if (error) {
-				return callback(error, null);
-			}
-
-			callback(null, result);
-		});
-	});
-};
-
 exports.getUserByMail = function(mail, callback){
 	mail = sanitizer.sanitize(mail);
 
@@ -117,7 +63,7 @@ exports.getUserByMail = function(mail, callback){
 				callback(error, null);
 				done();
 			}else{
-				callback(null, result);
+				callback(null, result.rows);
 				done();
 			}
 		});
@@ -138,7 +84,7 @@ exports.changePassword = function(password, id, callback){
 				callback(error, null);
 				done();
 			}else{
-				callback(null, result);
+				callback(null, result.rows[0].retval);
 				done();
 			}
 		});
@@ -158,7 +104,7 @@ exports.checkOAuth = function(oauth, callback){
 				callback(error, result);
 				done();
 			}else{
-				callback(null, result);
+				callback(null, result.rows[0].retval);
 				done();
 			}
 		});
@@ -182,9 +128,69 @@ exports.signUpOAuth = function(first, last, user, mail, oauth, callback) {
 				callback(error, null);
 				done();
 			} else {
-				callback(null, result);
+				callback(null, result.rows[0].retval);
 				done();
 			}
+		});
+	});
+};
+
+exports.createAuthSession = function (username, series, token, callback) {
+	username = sanitizer.sanitize(username);
+
+	pg.connect(conString, function (error, client, done) {
+		if (error) {
+			return callback(error, null);
+		}
+
+		client.query('select func_create_auth_session($1,$2,$3) as retval', [username, series, token], function (error, result) {
+			done();
+
+			if (error) {
+				return callback(error, null);
+			}
+
+			callback(null, result.rows[0].retval);
+		});
+	});
+};
+
+exports.destroyAuthSession = function (username, callback) {
+	username = sanitizer.sanitize(username);
+
+	pg.connect(conString, function (error, client, done) {
+		if (error) {
+			return callback(error, null);
+		}
+
+		client.query('select func_destroy_auth_session($1) as retval', [username], function (error, result) {
+			done();
+
+			if (error) {
+				return callback(error, null);
+			}
+
+			callback(null, result.rows[0].retval);
+		});
+	});
+};
+
+exports.checkAuthSession = function (username, series, token, callback) {
+	username = sanitizer.sanitize(username);
+
+	pg.connect(conString, function (error, client, done) {
+		if (error) {
+			return callback(error, null);
+		}
+
+		client.query('select func_check_auth_session($1,$2,$3) as retval', [username, series, token], function (error, result) {
+			done();
+
+			if (error) {
+				return callback(error, null);
+			}
+
+			callback(null, result.rows[0].retval);
 		});
 	});
 };

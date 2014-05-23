@@ -104,3 +104,11 @@ create table public.rel_user_equipment (
 	fk_user			integer references public.user(pk_user),
 	fk_equipment		integer references public.equipment(pk_equipment)
 );
+
+drop table if exists public.auth_session cascade;
+create table public.auth_session (
+	username text,
+	series text,
+	token text,
+	valid boolean default true
+);
