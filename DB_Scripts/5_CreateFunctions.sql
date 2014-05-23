@@ -130,6 +130,11 @@ begin
 		return true;
 	end if;
 
+	if (_count = 1) then
+		update public.auth_session set series = _series, token = _token where username = _username;
+		return true;
+	end if;
+
 	update public.auth_session set valid = false where username = _username;
 	return false;
 end

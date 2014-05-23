@@ -13,11 +13,11 @@ module.exports = function (app) {
 		response.status(200).sendfile('./App/public/index.html');
 	});
 	app.route('/account/signup')
-	.all(redirectToHttps, checkAuthSession, signup, function (request, response) {
+	.all(redirectToHttps, signup, function (request, response) { // Es wird keine Authentifizierung vorgenommen
 		response.status(200).sendfile('./App/public/account/signup/index.html');
 	});
 	app.route('/account/forgot')
-	.all(redirectToHttps, checkAuthSession, forgot, function (request, response) {
+	.all(redirectToHttps, forgot, function (request, response) { // Es wird keine Authentifizierung vorgenommen
 		response.status(200).sendfile('./App/public/account/forgot/index.html');
 	});
 	app.route('/account/reset')
@@ -76,19 +76,15 @@ function redirectToHttps(request, response, next) {
 	return next();
 
 	/*if (request.secure) {
-		next();
+		return next();
 	} else {
-		if (request.host == 'localhost' || request.host == '127.0.0.1') {
-			response.redirect('https://' + request.host + ':' + app.get('port') + request.path);
-		} else {
-			response.redirect('https://' + request.host + request.path);
-		}
+		response.redirect('https://' + request.host + request.path);
 	}*/
 }
 
 function checkAuthSession(request, response, next) {
 	console.log('checkAuthSession');
-	var cookies = request.cookies;
+	var cookies = request.signedCookies;
 
 	if (request.session.username) {
 		if (request.path.indexOf('/account') != -1) {
@@ -99,19 +95,23 @@ function checkAuthSession(request, response, next) {
 	} else if (cookies.username && cookies.series && cookies.token) {
 		DB.checkAuthSession(cookies.username, cookies.series, cookies.token, function (error, result) {
 			if (error) {
-				return response.redirect('/');
-			} else if (result) {
-				request.session.username = cookies.username;
-				console.log(request.path);
+				logfile('error.log', error);
 
-				if (request.path.indexOf('/account') != -1) {
+				if (request.path == '/') {
 					return next();
 				} else {
-					return response.redirect('/account');
+					return response.redirect('/');
 				}
+			} else if (result) {
+				createAuthSession(request, response, next, cookies.username, true);
 			} else {
+				logfile('error.log', 'unauthorized access via cookie for user "' + cookies.username + '"');
 				// TODO: Sende eine Warnung an den Client dass es einen unathorisierten Zugriff gegeben hat.
-				return response.redirect('/');
+				if (request.path == '/') {
+					return next();
+				} else {
+					return response.redirect('/');
+				}
 			}
 		});
 	} else if (request.path == '/') {
@@ -166,7 +166,12 @@ function createAuthSession(request, response, next, username, cookie) {
 				}
 
 				request.session.username = username;
-				return response.redirect('/account');
+
+				if (request.path.indexOf('/account') != -1) {
+					return next();
+				} else {
+					return response.redirect('/account');
+				}
 			});
 		});
 	});
@@ -386,8 +391,16 @@ function upload(request, response, next) {
 	console.log('upload');
 
 	try {
-		console.log(request.body);
 		return next();
+		var body = request.body;
+
+		if (body && body.image) {
+			var camery = body.camery;
+			var focal = body.focal;
+			var exposures = body.exposures;
+			var aperture = body.aperture;
+			var iso = body.iso;
+		}
 	} catch (e) {
 		logfile('error.log', e);
 	}

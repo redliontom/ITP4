@@ -107,8 +107,8 @@ create table public.rel_user_equipment (
 
 drop table if exists public.auth_session cascade;
 create table public.auth_session (
-	username text,
-	series text,
-	token text,
+	username text primary key,
+	series text not null,
+	token text not null,
 	valid boolean default true
 );
