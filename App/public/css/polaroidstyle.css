@@ -598,6 +598,24 @@ clear:left;
     margin-bottom: 1.0em;
 }
 /*--------------------------------------------*/
+
+/*upload*/
+h1#uploadh1 {
+    font-size: 8.0em;
+    text-align: center;
+}
+
+#input-file {
+    display: none;
+}
+
+.textCenter {
+    text-align: center;
+    margin: 0 auto;
+}
+
+/*--------------------------------------------*/
+
 @media screen and (max-width: 850px) {
     #profile_banner {
         display: none;
