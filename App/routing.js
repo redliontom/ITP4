@@ -12,10 +12,6 @@ module.exports = function (app) {
 	.all(redirectToHttps, checkAuthSession, login, function (request, response) {
 		response.status(200).sendfile('./App/public/index.html');
 	});
-	app.route('/account')
-	.all(redirectToHttps, checkAuthSession, account, function (request, response) {
-		response.status(200).sendfile('./App/public/account/index.html');
-	});
 	app.route('/account/signup')
 	.all(redirectToHttps, checkAuthSession, signup, function (request, response) {
 		response.status(200).sendfile('./App/public/account/signup/index.html');
@@ -28,6 +24,14 @@ module.exports = function (app) {
 	.all(redirectToHttps, checkAuthSession, reset, function (request, response) {
 		response.status(200).sendfile('./App/public/account/reset/index.html');
 	});
+	app.route('/account/upload')
+	.all(redirectToHttps, checkAuthSession, upload, function (request, response) {
+		response.redirect('/account');
+	})
+	app.route('/account')
+	.all(redirectToHttps, checkAuthSession, account, function (request, response) {
+		response.status(200).sendfile('./App/public/account/index.html');
+	});
 	app.route('/gpauth')
 	.all(redirectToHttps, checkAuthSession, oauth, function (request, response) {
 		response.status(200).sendfile('./App/public/account/index.html');
@@ -38,9 +42,8 @@ module.exports = function (app) {
 };
 
 function logfile(path, message) {
-	return console.log(path + ': ' + message);
-	// TODO: vor Auslieferung das return löschen
-
+	return console.log(path + ': ' + message); // TODO: vor Auslieferung das return löschen
+	
 	fs.open(path, 'a', 0666, function (error, fd) {
 		if (error) {
 			console.log(error);
@@ -88,10 +91,10 @@ function checkAuthSession(request, response, next) {
 	var cookies = request.cookies;
 
 	if (request.session.username) {
-		if (request.path != '/account') {
-			response.redirect('/account');
-		} else {
+		if (request.path.indexOf('/account') != -1) {
 			return next();
+		} else {
+			return response.redirect('/account');
 		}
 	} else if (cookies.username && cookies.series && cookies.token) {
 		DB.checkAuthSession(cookies.username, cookies.series, cookies.token, function (error, result) {
@@ -99,13 +102,15 @@ function checkAuthSession(request, response, next) {
 				return response.redirect('/');
 			} else if (result) {
 				request.session.username = cookies.username;
-				
-				if (request.path != '/account') {
-					response.redirect('/account');
-				} else {
+				console.log(request.path);
+
+				if (request.path.indexOf('/account') != -1) {
 					return next();
+				} else {
+					return response.redirect('/account');
 				}
 			} else {
+				// TODO: Sende eine Warnung an den Client dass es einen unathorisierten Zugriff gegeben hat.
 				return response.redirect('/');
 			}
 		});
@@ -375,4 +380,15 @@ function oauth(request, response, next) {
 		  	}
 		  });
 	});
+}
+
+function upload(request, response, next) {
+	console.log('upload');
+
+	try {
+		console.log(request.body);
+		return next();
+	} catch (e) {
+		logfile('error.log', e);
+	}
 }

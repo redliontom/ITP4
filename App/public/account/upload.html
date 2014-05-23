@@ -8,25 +8,25 @@
 <div id="content_container_small">
     <div class="content_box">
         <h1 id="uploadh1"><i class="fa fa-cloud-upload"></i></h1>
-        <form action="" method="post" enctype="multipart/form-data">
+        <form action="/account/upload" method="post" enctype="multipart/form-data">
             <p class="textCenter">
                 <button id="button-file" class="button_submit">Choose image</button>
                 <input type="file" id="input-file" />
             </p>
-    </div>
-    
-    <div class="content_header">
-        <i class="fa fa-picture-o"></i> Picture information
-    </div>
-    <div class="content_box">
-        <input class="input_text" type="text" name="camera" value="" placeholder="Camera">
-        <hr class="gray"><br>
-        <input class="input_text" type="text" name="focal" value="" placeholder="Focal Length">
-        <input class="input_text" type="text" name="exposure" value="" placeholder="Exposure time">
-        <input class="input_text" type="text" name="aperture" value="" placeholder="Aperture">
-        <input class="input_text" type="text" name="iso" value="" placeholder="ISO">
-        <br><br>
-        <button type="submit" name="submit" class="button_submit">Upload image</button>
+
+            <div class="content_header">
+                <i class="fa fa-picture-o"></i> Picture information
+            </div>
+            <div class="content_box">
+                <input class="input_text" type="text" name="camera" value="" placeholder="Camera">
+                <hr class="gray"><br>
+                <input class="input_text" type="text" name="focal" value="" placeholder="Focal Length">
+                <input class="input_text" type="text" name="exposure" value="" placeholder="Exposure time">
+                <input class="input_text" type="text" name="aperture" value="" placeholder="Aperture">
+                <input class="input_text" type="text" name="iso" value="" placeholder="ISO">
+                <br><br>
+                <button type="submit" name="submit" class="button_submit">Upload image</button>
+            </div>
         </form>
     </div>
 </div>
