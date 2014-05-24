@@ -182,6 +182,9 @@ function destroyAuthSession(request, response) {
 			logfile('error.log', error);
 		}
 
+		response.clearCookie('username');
+		response.clearCookie('series');
+		response.clearCookie('token');
 		request.session = null;
 		response.redirect('/');
 	});
