@@ -9,6 +9,7 @@ var routing = require('./App/routing');
 
 var sha1 = crypto.createHash('sha1');
 var hash = null;
+var mb = 1024 * 1024;
 
 sha1.update('polaroid luxembourg photo club'); // TODO: Zeile vor Implementierung abändern.
 hash = sha1.digest('hex');
@@ -16,7 +17,9 @@ hash = sha1.digest('hex');
 app.set('port', 8080);
 app.set('host', 'localhost');
 
-app.use(require('body-parser')());
+app.use(require('body-parser')({
+	limit: 10 * mb
+}));
 app.use(require('cookie-parser')(hash));
 app.use(require('cookie-session')({
 	secret: hash

@@ -394,9 +394,12 @@ function upload(request, response, next) {
 
 	// TODO: Upload implementieren.
 	try {
-		return next();
+		//return next();
 		var body = request.body;
-
+		console.log(body);
+		console.log(request.json);
+		console.log(request.urlencode);
+		return next();
 		if (body && body.image) {
 			var camery = body.camery;
 			var focal = body.focal;
