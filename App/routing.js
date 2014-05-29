@@ -406,6 +406,9 @@ function upload(request, response, next) {
 
 	var path = __dirname + '/public/upload/' + request.session.username;
 
+	// ImageMagick needs to be installed on host system!
+	var im = require('imagemagick');
+
 	try {
 		var body = request.body;
 		var files = request.files;
@@ -426,9 +429,21 @@ function upload(request, response, next) {
 
 			switch (picture.type) {
 				case 'image/jpeg':
-				case 'image/png':
-					// TODO: eine kleine Version des bildes herstellen
+				case 'image/png':					
 					fs.rename(picture.path, path + '/original/' + picture.name);
+
+					im.resize({
+						srcPath: path + '/original/' + picture.name,
+						dstPath: path + '/small/' + picture.name,
+  						width:   150
+					}, function(err, stdout, stderr){
+						if (err)
+							logfile('error.log', err);
+						else{							
+							console.log('imaged resized');								
+						}
+					});
+
 					return response.redirect('/account');
 				default:
 					logfile('error.log', 'invalid MIME type "' + picture.type + '" for user "' + request.session.username + '"');
@@ -445,7 +460,7 @@ function upload(request, response, next) {
 		logfile('error.log', e);
 
 		return response.send(500, {
-			message: 'Could not load picuter.'
+			message: 'Could not load picture.'
 		});
 	}
 }
