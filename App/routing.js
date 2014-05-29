@@ -29,7 +29,7 @@ module.exports = function (app) {
 		response.redirect('/account');
 	})
 	.get(redirectToHttps, checkAuthSession, function (request, response) {
-		response.send(200);
+		response.send(405);
 	});
 	app.route('/account')
 	.all(redirectToHttps, checkAuthSession, account, function (request, response) {
@@ -427,6 +427,7 @@ function upload(request, response, next) {
 			switch (picture.type) {
 				case 'image/jpeg':
 				case 'image/png':
+					// TODO: eine kleine Version des bildes herstellen
 					fs.rename(picture.path, path + '/original/' + picture.name);
 					return response.redirect('/account');
 				default:
