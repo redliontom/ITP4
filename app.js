@@ -3,6 +3,7 @@ var https = require('https');
 var http = require('http');
 var fs = require('fs');
 var crypto = require('crypto');
+
 var app = express();
 var path = __dirname + '/App/public';
 var routing = require('./App/routing');
@@ -17,8 +18,11 @@ hash = sha1.digest('hex');
 app.set('port', 8080);
 app.set('host', 'localhost');
 
+app.use(require('connect-multiparty')({
+	uploadDir: __dirname + '/App/temp'
+}));
 app.use(require('body-parser')({
-	limit: 10 * mb
+	limit: 5 * mb
 }));
 app.use(require('cookie-parser')(hash));
 app.use(require('cookie-session')({

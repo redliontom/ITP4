@@ -25,9 +25,12 @@ module.exports = function (app) {
 		response.status(200).sendfile('./App/public/account/reset/index.html');
 	});
 	app.route('/account/upload')
-	.all(redirectToHttps, checkAuthSession, upload, function (request, response) {
+	.post(redirectToHttps, checkAuthSession, upload, function (request, response) {
 		response.redirect('/account');
 	})
+	.get(redirectToHttps, checkAuthSession, function (request, response) {
+		response.send(200);
+	});
 	app.route('/account')
 	.all(redirectToHttps, checkAuthSession, account, function (request, response) {
 		response.status(200).sendfile('./App/public/account/index.html');
@@ -57,11 +60,20 @@ function logfile(path, message) {
 
 function createUserDir(username) {
 	// __dirname = <workingdir>/App
-	fs.mkdir(__dirname + '/' + username, 0660, function (error) {
-		if (error) {
-			logfile('error.log', error);
-		} else {
-			logfile('info.log', 'created new user \'' + username + '\'');
+	var path = __dirname + '/public/upload/' + username;
+
+	fs.mkdir(path, 0660, function (error) {
+		try {
+			fs.mkdirSync(path + '/original', 0660);
+			fs.mkdirSync(path + '/small', 0660);
+
+			if (error) {
+				logfile('error.log', error);
+			} else {
+				logfile('info.log', 'created new user \'' + username + '\'');
+			}
+		} catch (e) {
+			logfile('error.log', e);
 		}
 	});
 }
@@ -392,22 +404,47 @@ function oauth(request, response, next) {
 function upload(request, response, next) {
 	console.log('upload');
 
-	// TODO: Upload implementieren.
+	var path = __dirname + '/public/upload/' + request.session.username;
+
 	try {
-		//return next();
 		var body = request.body;
-		console.log(body);
-		console.log(request.json);
-		console.log(request.urlencode);
-		return next();
-		if (body && body.image) {
-			var camery = body.camery;
+		var files = request.files;
+
+		if (body && files && files.picture) {
+			var picture = files.picture;
+			var camery = body.camera;
 			var focal = body.focal;
 			var exposures = body.exposures;
 			var aperture = body.aperture;
 			var iso = body.iso;
+
+			if (picture.size <= 0) {
+				return response.send(406, {
+					message: 'File size could not be validated'
+				});
+			}
+
+			switch (picture.type) {
+				case 'image/jpeg':
+				case 'image/png':
+					fs.rename(picture.path, path + '/original/' + picture.name);
+					return response.redirect('/account');
+				default:
+					logfile('error.log', 'invalid MIME type "' + picture.type + '" for user "' + request.session.username + '"');
+
+					return response.send(403, {
+						message: 'Tried to upload invalid MIME-Type "' + picture.type + '".'
+					});
+					break;
+			}
+		} else {
+			return next();
 		}
 	} catch (e) {
 		logfile('error.log', e);
+
+		return response.send(500, {
+			message: 'Could not load picuter.'
+		});
 	}
 }
