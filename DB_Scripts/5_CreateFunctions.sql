@@ -169,3 +169,41 @@ begin
 	return true;
 end
 $$ language plpgsql;
+
+create or replace function func_save_picture_infos(
+	_token text,
+	_series text, 
+	_name text,
+	_directory text,
+	_flash boolean,
+	_aperture text,
+	_exposure_time text,
+	_focal_distance integer,
+	_iso integer
+	)
+	returns boolean
+	as $$
+declare
+	lastId integer;
+begin
+	insert into public.entity(pk_entity) VALUES(DEFAULT) RETURNING pk_entity into lastId;
+	insert into public.foto(pk_foto, fk_user, name, directory, flash, aperture, exposure_time, focal_distance, iso) 
+		values (
+			lastId,
+			(SELECT pk_user FROM public.user WHERE username LIKE (SELECT username FROM public.auth_session WHERE token LIKE _token AND series LIKE _series)),
+			_name,
+			_directory,
+			_flash,
+			_aperture,
+			_exposure_time,
+			_focal_distance,
+			_iso
+			);
+	return true;
+exception
+	when unique_violation then
+	return false;
+end
+$$ language plpgsql;
+
+

@@ -413,11 +413,12 @@ function upload(request, response, next) {
 		var body = request.body;
 		var files = request.files;
 
-		if (body && files && files.picture) {
+		if (body && files && files.picture) {			
 			var picture = files.picture;
+			var filename = randomString(8) + "_" + picture.name;
 			var camery = body.camera;
 			var focal = body.focal;
-			var exposures = body.exposures;
+			var exposure = body.exposure;
 			var aperture = body.aperture;
 			var iso = body.iso;
 
@@ -429,22 +430,31 @@ function upload(request, response, next) {
 
 			switch (picture.type) {
 				case 'image/jpeg':
-				case 'image/png':					
-					fs.rename(picture.path, path + '/original/' + picture.name);
+				case 'image/png':
+					DB.savePictureInfos(request.signedCookies.token, request.signedCookies.series, "Test", filename,
+						0, aperture, exposure, focal, iso, function(error, result){
+						if (error){
+							console.log(error);
+							return next();
+						}else{
+							fs.rename(picture.path, path + '/original/' + filename);
 
-					im.resize({
-						srcPath: path + '/original/' + picture.name,
-						dstPath: path + '/small/' + picture.name,
-  						width:   150
-					}, function(err, stdout, stderr){
-						if (err)
-							logfile('error.log', err);
-						else{							
-							console.log('imaged resized');								
+							im.resize({
+								srcPath: path + '/original/' + filename,
+								dstPath: path + '/small/' + filename,
+		  						width:   150
+							}, function(err, stdout, stderr){
+								if (err)
+									logfile('error.log', err);
+								else{							
+									console.log('imaged resized');								
+								}
+							});
+
+							return response.redirect('/account');
 						}
 					});
-
-					return response.redirect('/account');
+					break;
 				default:
 					logfile('error.log', 'invalid MIME type "' + picture.type + '" for user "' + request.session.username + '"');
 
@@ -463,4 +473,19 @@ function upload(request, response, next) {
 			message: 'Could not load picture.'
 		});
 	}
+}
+
+// Hilfsfunktion, um einen zufälligen String zu generieren
+function randomString(count){
+	var chars = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUWXYZ0123456789";
+
+	var rnd = crypto.randomBytes(count),
+		value = new Array(count),
+		len = chars.length;
+
+	for (var i = 0; i < count; i++){
+		value[i] = chars[rnd[i] % len];
+	}
+
+	return value.join('');
 }

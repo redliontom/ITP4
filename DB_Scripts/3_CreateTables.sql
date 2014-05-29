@@ -31,13 +31,14 @@ drop table if exists public.foto cascade;
 create table public.foto (
 	pk_foto			integer primary key references public.entity(pk_entity),
 	fk_user			integer references public.user(pk_user),
+	name 			text,
 	directory		text,
 	flash			boolean,
 	aperture		text,
 	exposure		text,
-	focal_distance		integer,
-	iso			integer,
-	exposure_time		text
+	focal_distance	integer,
+	iso				integer,
+	exposure_time	text
 );
 
 drop table if exists public.foto_attribute cascade;
