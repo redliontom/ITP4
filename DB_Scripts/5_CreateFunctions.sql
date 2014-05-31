@@ -171,8 +171,7 @@ end
 $$ language plpgsql;
 
 create or replace function func_save_picture_infos(
-	_token text,
-	_series text, 
+	_username text,
 	_name text,
 	_directory text,
 	_flash boolean,
@@ -190,7 +189,7 @@ begin
 	insert into public.foto(pk_foto, fk_user, name, directory, flash, aperture, exposure_time, focal_distance, iso) 
 		values (
 			lastId,
-			(SELECT pk_user FROM public.user WHERE username LIKE (SELECT username FROM public.auth_session WHERE token LIKE _token AND series LIKE _series)),
+			(SELECT pk_user FROM public.user WHERE username LIKE _username),
 			_name,
 			_directory,
 			_flash,

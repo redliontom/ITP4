@@ -431,10 +431,11 @@ function upload(request, response, next) {
 			switch (picture.type) {
 				case 'image/jpeg':
 				case 'image/png':
-					DB.savePictureInfos(request.signedCookies.token, request.signedCookies.series, "Test", filename,
-						0, aperture, exposure, focal, iso, function(error, result){
+					DB.savePictureInfos(request.session.username, "Test", filename, 0, 
+						aperture, exposure, focal, iso, function(error, result)
+					{
 						if (error){
-							console.log(error);
+							logfile('error.log', error);
 							return next();
 						}else{
 							fs.rename(picture.path, path + '/original/' + filename);

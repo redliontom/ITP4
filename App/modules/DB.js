@@ -195,9 +195,8 @@ exports.checkAuthSession = function (username, series, token, callback) {
 	});
 };
 
-exports.savePictureInfos = function (token, series, name, directory, flash, aperture, exposure_time, focal_distance, iso, callback){
-	token = sanitizer.sanitize(token);
-	series = sanitizer.sanitize(series);
+exports.savePictureInfos = function (username, name, directory, flash, aperture, exposure_time, focal_distance, iso, callback){
+	username = sanitizer.sanitize(username);
 	name = sanitizer.sanitize(name);
 	directory = sanitizer.sanitize(directory);
 	flash = sanitizer.sanitize(flash);
@@ -211,8 +210,8 @@ exports.savePictureInfos = function (token, series, name, directory, flash, aper
 			return callback(error, null);
 		}
 
-		client.query('select func_save_picture_infos($1, $2, $3, $4, $5, $6, $7, $8, $9) as retval', 
-			[token, series, name, directory, flash || false, aperture || null, exposure_time || null, focal_distance || null, iso || null], function(error, result){
+		client.query('select func_save_picture_infos($1, $2, $3, $4, $5, $6, $7, $8) as retval', 
+			[username, name, directory, flash || false, aperture || null, exposure_time || null, focal_distance || null, iso || null], function(error, result){
 				done();
 
 				if (error){
