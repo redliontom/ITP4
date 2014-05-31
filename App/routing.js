@@ -3,6 +3,7 @@ var fs = require('fs');
 var crypto = require('crypto');
 var mail = require("nodemailer");
 var readline = require('readline');
+var imagemagick = require('imagemagick');
 var googleapis = require('googleapis'),
     OAuth2 = googleapis.auth.OAuth2;
 
@@ -45,7 +46,7 @@ module.exports = function (app) {
 };
 
 function logfile(path, message) {
-	return console.log(path + ': ' + message); // TODO: vor Auslieferung das return löschen
+	return console.log(message); // TODO: vor Auslieferung das return löschen
 	
 	fs.open(path, 'a', 0666, function (error, fd) {
 		if (error) {
@@ -406,9 +407,6 @@ function upload(request, response, next) {
 
 	var path = __dirname + '/public/upload/' + request.session.username;
 
-	// ImageMagick needs to be installed on host system!
-	var im = require('imagemagick');
-
 	try {
 		var body = request.body;
 		var files = request.files;
@@ -442,21 +440,16 @@ function upload(request, response, next) {
 							});
 						} else {
 							fs.rename(picture.path, path + '/original/' + filename);
-
-							im.resize({
-								srcPath: path + '/original/' + filename,
-								dstPath: path + '/small/' + filename,
-		  						width:   150
-							}, function (err, stdout, stderr) {
-								if (err && err != 'Error: Command failed: ') {
-									logfile('error.log', err);
+							imageResizeCrop(path, filename, function (error) {
+								if (error) {
+									logfile('error.log', error);
 
 									return response.send(500, {
 										message: 'Could not resize image'
 									});
-								} else {
-									return next();						
 								}
+
+								return next(); // TODO: Auf response.send(...) abändern sobald der client auf den response reagiert.
 							});
 						}
 					});
@@ -494,4 +487,27 @@ function randomString(count){
 	}
 
 	return value.join('');
+}
+
+function imageResizeCrop(path, filename, callback)
+{
+	var original = path + '/original/' + filename;
+	var small = path + '/small/' + filename;
+
+	imagemagick.convert([original, '-set', 'option:size', '%[fx:min(w,h)]x%[fx:min(w,h)]',
+		'xc:none', '+swap', '-gravity', 'center', '-composite', small], function (error, stdout, stderr) {
+			if (error && error != 'Error: Command failed: ') {
+				logfile('error.log', error);
+				return callback(error);
+			}
+
+			imagemagick.convert([small, '-resize', '128', small], function (error, stdout, stderr) {
+				if (error && error != 'Error: Command failed: ') {
+					logfile('error.log', error);
+					return callback(error);
+				}
+
+				return callback();
+			});
+	});
 }
