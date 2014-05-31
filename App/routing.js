@@ -438,8 +438,11 @@ function upload(request, response, next) {
 					{
 						if (error){
 							logfile('error.log', error);
-							return next();
-						}else{
+
+							return response.send(500, {
+								message: 'Invalide image data'
+							});
+						} else {
 							fs.rename(picture.path, path + '/original/' + filename);
 
 							im.resize({
