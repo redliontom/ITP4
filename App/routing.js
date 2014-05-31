@@ -29,7 +29,7 @@ module.exports = function (app) {
 		response.redirect('/account');
 	})
 	.get(redirectToHttps, checkAuthSession, function (request, response) {
-		response.send(405);
+		response.redirect('/account');
 	});
 	app.route('/account')
 	.all(redirectToHttps, checkAuthSession, account, function (request, response) {
@@ -433,10 +433,8 @@ function upload(request, response, next) {
 			switch (picture.type) {
 				case 'image/jpeg':
 				case 'image/png':
-					DB.savePictureInfos(request.session.username, "Test", filename, 0, 
-						aperture, exposure, focal, iso, function(error, result)
-					{
-						if (error){
+					DB.savePictureInfos(request.session.username, "Test", filename, 0, aperture, exposure, focal, iso, function (error, result) {
+						if (error) {
 							logfile('error.log', error);
 
 							return response.send(500, {
@@ -449,8 +447,8 @@ function upload(request, response, next) {
 								srcPath: path + '/original/' + filename,
 								dstPath: path + '/small/' + filename,
 		  						width:   150
-							}, function(err, stdout, stderr){
-								if (err) {
+							}, function (err, stdout, stderr) {
+								if (err && err != 'Error: Command failed: ') {
 									logfile('error.log', err);
 
 									return response.send(500, {
