@@ -423,6 +423,8 @@ function upload(request, response, next) {
 			var iso = body.iso;
 
 			if (picture.size <= 0) {
+				logfile('error.log', 'file size of picture "' + picture.name + '" is zero');
+
 				return response.send(406, {
 					message: 'File size could not be validated'
 				});
@@ -445,14 +447,16 @@ function upload(request, response, next) {
 								dstPath: path + '/small/' + filename,
 		  						width:   150
 							}, function(err, stdout, stderr){
-								if (err)
+								if (err) {
 									logfile('error.log', err);
-								else{							
-									console.log('imaged resized');								
+
+									return response.send(500, {
+										message: 'Could not resize image'
+									});
+								} else {
+									return next();						
 								}
 							});
-
-							return response.redirect('/account');
 						}
 					});
 					break;
