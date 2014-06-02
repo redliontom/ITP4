@@ -195,15 +195,15 @@ exports.checkAuthSession = function (username, series, token, callback) {
 	});
 };
 
-exports.savePictureInfos = function (username, name, directory, flash, aperture, exposure_time, focal_distance, iso, callback){
+exports.savePictureInfos = function (username, name, directory, flash, aperture, exposure_time, focal_distance, iso, callback) {
 	username = sanitizer.sanitize(username);
 	name = sanitizer.sanitize(name);
 	directory = sanitizer.sanitize(directory);
 	flash = sanitizer.sanitize(flash);
 	aperture = sanitizer.sanitize(aperture);
 	exposure_time = sanitizer.sanitize(exposure_time);
-	focal_distance = sanitizer.sanitize(focal_distance);
-	iso = sanitizer.sanitize(iso);
+	focal_distance = focal_distance == null || focal_distance == "" ? 0 : parseInt(focal_distance);
+	iso = iso == null || iso == "" ? 0 : parseInt(iso);
 
 	pg.connect(conString, function(error, client, done){
 		if (error){
@@ -211,7 +211,7 @@ exports.savePictureInfos = function (username, name, directory, flash, aperture,
 		}
 
 		client.query('select func_save_picture_infos($1, $2, $3, $4, $5, $6, $7, $8) as retval', 
-			[username, name, directory, flash || false, aperture || null, exposure_time || null, focal_distance || null, iso || null], function(error, result){
+			[username, name, directory, flash, aperture, exposure_time, focal_distance, iso], function(error, result){
 				done();
 
 				if (error){
