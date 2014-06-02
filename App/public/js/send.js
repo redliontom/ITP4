@@ -20,7 +20,7 @@ $( document ).ready(function() {
             $.ajax({
                 type: 'POST',
                 url: '/account/settings',
-                data: SON.stringify(data),
+                data: JSON.stringify(data),
                 contentType: 'application/json',
                 success: function(msg) {
                     $('#response').addClass('send_message_success');
