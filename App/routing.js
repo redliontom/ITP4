@@ -300,8 +300,8 @@ function forgot(request, response, next) {
 						var key = crypto.createHash('md5').update(pw).digest('hex');
 						var mailOptions = {
 							from: "noreply@polaroidphotoclub.lu",
-							to: result['email'],
-							subject: "Password forget!",
+							to: result[0]['email'],
+							subject: "Password forgot!",
 							text: 'Follow the link to reset your password: ' + domain + '/account/reset?id=' + result[0]['pk_user'] + '&username' + result[0]['username'] + '=&key=' + key
 						}
 
@@ -414,6 +414,7 @@ function upload(request, response, next) {
 		if (body && files && files.picture) {			
 			var picture = files.picture;
 			var filename = randomString(8) + "_" + picture.name;
+			var title = body.title;
 			var camery = body.camera;
 			var focal = body.focal;
 			var exposure = body.exposure;
@@ -431,7 +432,7 @@ function upload(request, response, next) {
 			switch (picture.type) {
 				case 'image/jpeg':
 				case 'image/png':
-					DB.savePictureInfos(request.session.username, "Test", filename, 0, aperture, exposure, focal, iso, function (error, result) {
+					DB.savePictureInfos(request.session.username, title, filename, 0, aperture, exposure, focal, iso, function (error, result) {
 						if (error) {
 							logfile('error.log', error);
 
