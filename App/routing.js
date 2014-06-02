@@ -427,6 +427,12 @@ function upload(request, response, next) {
 				return response.send(406, {
 					message: 'File size could not be validated'
 				});
+			} else if (!title) {
+				logfile('error.log', 'No image title');
+
+				return response.send(406, {
+					message: 'Picture title could not be validated'
+				});
 			}
 
 			switch (picture.type) {
