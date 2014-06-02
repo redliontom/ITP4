@@ -621,6 +621,89 @@ h1#uploadh1 {
     margin: 0 auto;
 }
 
+
+#popup_background {
+    position: fixed;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(132, 132, 132, 0.3);
+    visibility: hidden;
+    z-index: 90000;
+}
+
+.popup_ui {
+    position: absolute;
+    left: 50%;
+    margin-left: -25em;
+    top: 10%;
+    width: 50em;
+    border: 1px solid #bbb;
+    background-color: #fff;
+    z-index: 90001;
+    visibility: hidden;
+}
+
+.popup_header {
+    width: 100;
+    background-color: #3498db;
+    color: #fff;
+    font-weight: 400;
+    padding: 1.0em;
+}
+
+.popup_content {
+    padding: 1.0em;
+}
+
+#close {
+    float: right;
+    color: #C9DDFF;
+}
+
+#close:hover {
+    color: #fff;
+}
+
+#pop_icon {
+    padding-right: 1.0em;
+}
+
+.btn_rigt {
+    float: right;
+    padding-bottom: 2.0em;
+    padding-top: 0.5em;
+    padding-right: 1.4em;
+}
+
+.send_message {
+    position: fixed;
+    visibility: hidden;
+	top: 0em; 
+	left: 50%;
+	margin-left: -12.5em;
+	width: 25em; /* 400px / 16px */
+	height: 1.8em;
+	font-weight: 300;
+	font-size: 1.0em; 
+	text-align: center;
+	padding-top: 0.8em;
+	opacity: 0.8;
+    z-index: 90001;
+}
+
+.send_message_error {
+    background-color: #ff8e81;
+	border-top: 3px solid #c0392b;
+    color: #c0392b;
+}
+
+.send_message_success {
+    background-color: #9DE69D;
+	border-top: 3px solid #33CC33;
+    color: #33CC33;
+}
+
 /*--------------------------------------------*/
 
 @media screen and (max-width: 850px) {

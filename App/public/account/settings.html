@@ -1,3 +1,7 @@
+<script src="../js/send.js"></script>
+<script src="../js/popup.js"></script>
+<!--Response Message -->
+<div id="response" class="send_message"></div>
 <div id="content_container_small">
     <div class="content_header">
         <i class="fa fa-cogs"></i> General Settings
@@ -7,17 +11,17 @@
             <tr>
                 <th>Name</th>
                 <td>David Wolf</td>
-                <td class="table_right"><i class="fa fa-pencil"></i></td>
+                <td class="table_right"><a href="#" onclick="popup('popup_name');"><i class="fa fa-pencil"></i></a></td>
             </tr>
             <tr>
                 <th>Email</th>
                 <td> david.wolf@example.com</td>
-                <td class="table_right"><i class="fa fa-pencil"></i></td>
+                <td class="table_right"><a href="#" onclick="popup('popup_mail');"><i class="fa fa-pencil"></i></a></td>
             </tr>
             <tr>
                 <th>Password</th>
                 <td>* * * *</td>
-                <td class="table_right"><i class="fa fa-pencil"></i></td>
+                <td class="table_right"><a href="#" onclick="popup('popup_password');"><i class="fa fa-pencil"></i></a></td>
             </tr>
         </table>
     </div>
@@ -30,8 +34,85 @@
             <tr>
                 <th>Who can see my stuff?</th>
                 <td>Friends</td>
-                <td class="table_right"><i class="fa fa-pencil"></i></td>
+                <td class="table_right"><a href="#" onclick="popup('popup_settings');"><i class="fa fa-pencil"></i></a></td>
             </tr>
         </table>
     </div>
 </div>
+<div id="popup_background"></div>
+
+<!-- Popup name-->
+    <div id="popup_name" class="popup_ui">
+        <div class="popup_header">
+            <i id="pop_icon" class="fa fa-pencil"></i> Change your name 
+            <a  id="close" href="#" onclick="popup('popup_name');"><i class="fa fa-minus-square" ></i></a> 
+        </div>	
+        <div class="popup_content">
+            <form action="/account/settings" method="post" name="form_name" id="form_name" role="form" accept-charset="utf-8" onsubmit="return validateForm()">
+                Forename
+                <input class="input_text" type="text" name="forename" value="" placeholder="David">
+                Surname
+                <input class="input_text" type="text" name="surname" value="" placeholder="Wolf">
+                <span class="btn_rigt">
+                    <button class="button_submit" type="submit" id="submit" name="submit">Save changes</button>
+                </span>
+            </form>
+        </div>
+    </div>
+
+<!-- Popup mail-->
+    <div id="popup_mail" class="popup_ui">
+        <div class="popup_header">
+            <i id="pop_icon" class="fa fa-pencil"></i> Change your email address 
+            <a  id="close" href="#" onclick="popup('popup_mail');"><i class="fa fa-minus-square" ></i></a> 
+        </div>	
+        <div class="popup_content">
+            <form action="/account/settings" method="post" name="form-mail" role="form" accept-charset="utf-8">
+                Email address
+                <input class="input_text" type="text" name="mail" value="" placeholder="david.wolf@example.com">
+                <span class="btn_rigt">
+                    <button class="button_submit" type="submit" id="submit" name="submit">Save changes</button>
+                </span>
+            </form>
+        </div>
+    </div>
+
+<!-- Popup password-->
+    <div id="popup_password" class="popup_ui">
+        <div class="popup_header">
+            <i id="pop_icon" class="fa fa-pencil"></i> Change your password 
+            <a  id="close" href="#" onclick="popup('popup_password');"><i class="fa fa-minus-square" ></i></a> 
+        </div>	
+        <div class="popup_content">
+            <form action="/account/settings" method="post" name="form-password" role="form" accept-charset="utf-8">
+                Current
+                <input class="input_text" type="password" name="old_password">
+                New
+                <input class="input_text" type="password" name="new_password1">
+                Retype new
+                <input class="input_text" type="password" name="new_password2">
+                <span class="btn_rigt">
+                    <button class="button_submit" type="submit" name="submit">Save changes</button>
+                </span>
+            </form>
+        </div>
+    </div>
+
+<!-- Popup settings-->
+    <div id="popup_settings" class="popup_ui">
+        <div class="popup_header">
+            <i id="pop_icon" class="fa fa-pencil"></i> Privacy Settings 
+            <a  id="close" href="#" onclick="popup('popup_settings');"><i class="fa fa-minus-square" ></i></a> 
+        </div>	
+        <div class="popup_content">
+            <form action="/account/settings" method="post" name="form-password" role="form" accept-charset="utf-8">
+                Who can see my stuff?<br> <br>
+                <input type="radio" name="settings" value="1" checked> <i class="fa fa-user"></i> Friends (Your friends on polaroid)<br>
+                <input type="radio" name="settings" value="0"> <i class="fa fa-globe"></i> Pulibc (Anyone on polaroid)<br>
+                <span class="btn_rigt">
+                    <button class="button_submit" type="submit" name="submit">Save changes</button>
+                </span>
+            </form>
+        </div>
+    </div>
+
