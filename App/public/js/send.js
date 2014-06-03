@@ -59,7 +59,7 @@ $( document ).ready(function() {
     $('#form_name').submit(function(){
         var forename = document.forms["form_name"]["forename"].value;
         var surname = document.forms["form_name"]["surname"].value;
-        if ((forename==null || forename=="") & (surname==null || surname==""))
+        if ((forename==null || forename=="") || (surname==null || surname==""))
         {
             $('#response').addClass('send_message_error');
             $('#response').css('visibility', 'visible');
@@ -174,7 +174,7 @@ $( document ).ready(function() {
         var old_password = document.forms["form_password"]["old_password"].value;
         var new_password_1 = document.forms["form_password"]["new_password_1"].value;
         var new_password_2 = document.forms["form_password"]["new_password_2"].value;
-        if ((old_password==null || old_password=="") & (new_password_1==null || new_password_1=="") & (new_password_2==null || new_password_2==""))
+        if ((old_password==null || old_password=="") || (new_password_1==null || new_password_1=="") || (new_password_2==null || new_password_2==""))
         {
             $('#response').addClass('send_message_error');
             $('#response').css('visibility', 'visible');
@@ -224,6 +224,7 @@ $( document ).ready(function() {
     });
 });
 
+// Settings: Daten werden vom Client geladen
 function load_data() {
      var data = {};
      $.ajax({
@@ -259,4 +260,3 @@ function recive_data() {
 	   });	
     },"json");
 }
-
