@@ -223,7 +223,7 @@ exports.savePictureInfos = function (username, name, directory, flash, aperture,
 	});
 };
 
-exports.changeUserName = function (username, forename, surname) {
+exports.changeUserName = function (username, forename, surname, callback) {
 	username = sanitizer.sanitize(username);
 	forename = sanitizer.sanitize(forename);
 	surname = sanitizer.sanitize(surname);
@@ -234,7 +234,69 @@ exports.changeUserName = function (username, forename, surname) {
 		}
 
 		client.query('select func_change_user_name($1, $2, $3) as retval', [username, forename, surname], function (error, result) {
-			// TODO: all!!!
+			done();
+
+			if (error) {
+				return callback(error, null);
+			}
+
+			callback(null, result.rows[0].retval);
+		});
+	});
+};
+
+exports.changeUserMail = function (username, mail, callback) {
+	username = sanitizer.sanitize(username);
+	mail = sanitizer.sanitize(mail);
+
+	// TODO: Mail überprüfen und erneut Validierungsmail aussenden
+
+	if (!mail) {
+		return callback(new Error('No mail provided'), null);
+	}
+
+	pg.connect(conString, function (error, client, done) {
+		if (error) {
+			return callback(error, null);
+		}
+
+		client.query('select func_change_user_mail($1, $2) as retval', [username, mail], function (error, result) {
+			done();
+
+			if (error) {
+				return callback(error, null);
+			}
+
+			callback(null, result.rows[0].retval);
+		});
+	});
+};
+
+exports.changeUserPassword = function (username, old, new1, new2, callback) {
+	username = sanitizer.sanitize(username);
+	old = sanitizer.sanitize(old);
+	new1 = sanitizer.sanitize(new1);
+	new2 = sanitizer.sanitize(new2);
+
+	if (!new1 || !new2) {
+		return callback(new Error('No password provided'), null);
+	} else if (new1 != new2) {
+		return callback(new Error('Password does not match'), null);
+	}
+
+	pg.connect(conString, function (error, client, done) {
+		if (error) {
+			return callback(error, null);
+		}
+
+		client.query('select func_change_user_password($1, $2, $3) as retval', [username, old, new1], function (error, result) {
+			done();
+
+			if (error) {
+				return callback(error, null);
+			}
+
+			callback(null, result.rows[0].retval);
 		});
 	});
 };

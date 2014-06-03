@@ -545,6 +545,8 @@ function settings(request, response, next) {
 	var body = request.body;
 
 	if (body) {
+		console.log(body);
+
 		if (body.forename && body.surname) {
 			return DB.changeUserName(request.session.username, body.forename, body.surname, function (error, result) {
 				if (error) {
@@ -552,9 +554,15 @@ function settings(request, response, next) {
 					return response.status(500).send({
 						message: 'Could not change name'
 					});
+				} else if (result) {
+					// TODO: Response für Namen senden
+					return next();
+				} else {
+					logfile('error.log', 'Invalid username: ' + request.session.username);
+					return response.status(406).send({
+						message: 'Could not verify username'
+					});
 				}
-				// TODO: Response für Namen senden
-				return next();
 			})
 		}
 
@@ -565,9 +573,15 @@ function settings(request, response, next) {
 					return response.status(500).send({
 						message: 'Could not change mail'
 					});
+				} else if (result) {
+					// TODO: Response für Mail senden
+					return next();
+				} else {
+					logfile('error.log', 'Invalid username: ' + request.session.username);
+					return response.status(406).send({
+						message: 'Could not verify username'
+					});
 				}
-				// TODO: eMail response senden
-				return next();
 			});
 		}
 
@@ -578,14 +592,20 @@ function settings(request, response, next) {
 					return response.status(500).send({
 						message: 'Could not change password'
 					});
+				} else if (result) {
+					// TODO: Response für Password senden
+					return next();
+				} else {
+					logfile('error.log', 'Invalid username and/or password: ' + request.session.username);
+					return response.status(406).send({
+						message: 'Could not verify username'
+					});
 				}
-				// TODO: Passwort response senden
-				return next();
 			});
 		}
 
 		return response.status(406).send({
-			message: 'No arguments supplied'
+			message: 'No arguments provided'
 		});
 	} else {
 		return next();

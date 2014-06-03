@@ -1,9 +1,9 @@
 ﻿drop table if exists public.user cascade;
 create table public.user (
-	pk_user			serial primary key,
-	email			text not null,
+	pk_user			serial unique not null,
+	email			text unique not null,
 	password		text not null,
-	username		text unique not null,
+	username		text primary key,
 	forename		text,
 	surname			text,
 	status			boolean
@@ -11,8 +11,8 @@ create table public.user (
 
 drop table if exists public.user_friend cascade;
 create table public.user_friend (
-	fk_user1		integer references public.user(pk_user),
-	fk_user2		integer references public.user(pk_user),
+	fk_user1		text references public.user(username),
+	fk_user2		text references public.user(username),
 	status 			boolean
 );
 
@@ -23,14 +23,14 @@ create table public.entity (
 
 drop table if exists public.like cascade;
 create table public.like(
-	fk_user			integer references public.user(pk_user),
+	fk_user			text references public.user(username),
 	fk_entity		integer references public.entity(pk_entity)
 );
 
 drop table if exists public.foto cascade;
 create table public.foto (
 	pk_foto			integer primary key references public.entity(pk_entity),
-	fk_user			integer references public.user(pk_user),
+	fk_user			text references public.user(username),
 	name 			text,
 	directory		text,
 	flash			boolean,
@@ -57,13 +57,13 @@ create table public.rel_foto_attribute (
 drop table if exists public.comment cascade;
 create table public.comment (
 	pk_comment		integer primary key references public.entity(pk_entity),
-	fk_user			integer references public.user(pk_user),
+	fk_user			text references public.user(username),
 	fk_comment_on		integer references public.entity(pk_entity)
 );
 
 drop table if exists public.like cascade;
 create table public.like (
-	fk_user			integer references public.user(pk_user),
+	fk_user			text references public.user(username),
 	fk_entity		integer references public.entity(pk_entity)
 );
 
@@ -82,7 +82,7 @@ create table public.entity_tag (
 drop table if exists public.album cascade;
 create table public.album (
 	pk_album		serial primary key,
-	fk_user			integer references public.user(pk_user),
+	fk_user			text references public.user(username),
 	album_name		text
 );
 
@@ -102,7 +102,7 @@ create table public.equipment (
 
 drop table if exists public.rel_user_equipment cascade;
 create table public.rel_user_equipment (
-	fk_user			integer references public.user(pk_user),
+	fk_user			text references public.user(username),
 	fk_equipment		integer references public.equipment(pk_equipment)
 );
 
