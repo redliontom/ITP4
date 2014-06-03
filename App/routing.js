@@ -573,7 +573,7 @@ function changeMail(request, response, next) {
 			return DB.changeUserMail(request.session.username, body.mail, function (error, result) {
 				if (error) {
 					logfile('error.log', error);
-					return response.status(500).send(error);
+					return response.status(500).send('Please provide a valid email address!');
 				} else if (result) {
 					return response.status(200).send('Success');
 				} else {
