@@ -1,4 +1,5 @@
-﻿drop table if exists public.user cascade;
+﻿
+drop table if exists public.user cascade;
 create table public.user (
 	pk_user			serial unique not null,
 	email			text unique not null,
@@ -6,7 +7,7 @@ create table public.user (
 	username		text primary key,
 	forename		text,
 	surname			text,
-	status			boolean
+	status			boolean default false -- FALSE = private und TRUE = öffentlich
 );
 
 drop table if exists public.user_friend cascade;

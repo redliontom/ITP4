@@ -436,7 +436,9 @@ function upload(request, response, next) {
 
 		//if (body && files && files.picture) {			
 		if (body && body.picture && body.title) {
-			var picture = files.picture;
+			//var picture = files.picture;
+			var picture = body.picture;
+
 			var filename = randomString(8) + "_" + picture.name;
 			var title = body.title;
 			var camery = body.camera;
@@ -614,9 +616,13 @@ function changePassword(request, response, next) {
 	}
 }
 
+function changePrivacy(request, response, next) {
+	// TODO: alles!!!
+}
+
 function sendSettings(request, response, next) {
 	console.log('sendSettings');
-	DB.sql('select forename, surname, email from public.user where username=' + request.session.username, function (error, result) {
+	DB.sql('select forename, surname, email, status from public.user where username=' + request.session.username, function (error, result) {
 		if (error) {
 			return response.status(500).send('Could not read from database');
 		} else if (result.length > 1) {
@@ -628,8 +634,8 @@ function sendSettings(request, response, next) {
 		response.status(200).send({
 			forename: row.forename,
 			surname: row.surname,
-			mail: row.email
-			// TODO: Privacy-Einstellungen senden
+			mail: row.email,
+			status: row.status
 		})
 	});
 }
