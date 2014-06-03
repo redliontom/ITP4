@@ -35,7 +35,7 @@ module.exports = function (app) {
 	// Settings
 	app.route('/account/settings')
 	.all(redirectToHttps, checkAuthSession)
-	.post(settings, function (request, response) {
+	.post(changeName, changeMail, changePassword, sendSettings, function (request, response) {
 		response.redirect('/account');
 	})
 	.get(function (request, response) {
@@ -44,10 +44,11 @@ module.exports = function (app) {
 
 	// Upload
 	app.route('/account/upload')
-	.post(redirectToHttps, checkAuthSession, upload, function (request, response) {
+	.all(redirectToHttps, checkAuthSession)
+	.post(upload, function (request, response) {
 		response.redirect('/account');
 	})
-	.get(redirectToHttps, checkAuthSession, function (request, response) {
+	.get(function (request, response) {
 		response.redirect('/account');
 	});
 
@@ -541,12 +542,11 @@ function imageResizeCrop(path, filename, callback)
 	});
 }
 
-function settings(request, response, next) {
+function changeName(request, response, next) {
+	console.log('changeName');
 	var body = request.body;
 
 	if (body) {
-		console.log(body);
-
 		if (body.forename && body.surname) {
 			return DB.changeUserName(request.session.username, body.forename, body.surname, function (error, result) {
 				if (error) {
@@ -555,17 +555,29 @@ function settings(request, response, next) {
 						message: 'Could not change name'
 					});
 				} else if (result) {
-					// TODO: Response für Namen senden
-					return next();
+					return response.status(200).send({
+						message: 'Success'
+					});
 				} else {
 					logfile('error.log', 'Invalid username: ' + request.session.username);
 					return response.status(406).send({
 						message: 'Could not verify username'
 					});
 				}
-			})
+			});
+		} else {
+			return next();
 		}
+	} else {
+		return next();
+	}
+}
 
+function changeMail(request, response, next) {
+	console.log('changeMail');
+	var body = request.body;
+
+	if (body) {
 		if (body.mail) {
 			return DB.changeUserMail(request.session.username, body.mail, function (error, result) {
 				if (error) {
@@ -574,8 +586,9 @@ function settings(request, response, next) {
 						message: 'Could not change mail'
 					});
 				} else if (result) {
-					// TODO: Response für Mail senden
-					return next();
+					return response.status(200).send({
+						message: 'Success'
+					});
 				} else {
 					logfile('error.log', 'Invalid username: ' + request.session.username);
 					return response.status(406).send({
@@ -583,8 +596,19 @@ function settings(request, response, next) {
 					});
 				}
 			});
+		} else {
+			return next();
 		}
+	} else {
+		return next();
+	}
+}
 
+function changePassword(request, response, next) {
+	console.log('changePassword');
+	var body = request.body;
+
+	if (body) {
 		if (body.old_password && body.new_password_1 && body.new_password_2) {
 			return DB.changeUserPassword(request.session.username, body.old_password, body.new_password_1, body.new_password_2, function (error, result) {
 				if (error) {
@@ -593,8 +617,9 @@ function settings(request, response, next) {
 						message: 'Could not change password'
 					});
 				} else if (result) {
-					// TODO: Response für Password senden
-					return next();
+					return response.status(200).send({
+						message: 'Success'
+					});
 				} else {
 					logfile('error.log', 'Invalid username and/or password: ' + request.session.username);
 					return response.status(406).send({
@@ -602,12 +627,34 @@ function settings(request, response, next) {
 					});
 				}
 			});
+		} else {
+			return next();
 		}
-
-		return response.status(406).send({
-			message: 'No arguments provided'
-		});
 	} else {
 		return next();
 	}
+}
+
+function sendSettings(request, response, next) {
+	console.log('sendSettings');
+	DB.sql('select forename, surname, email from public.user where username=' + request.session.username, function (error, result) {
+		if (error) {
+			return response.status(500).send({
+				message: 'Could not read from database'
+			});
+		} else if (result.length > 1) {
+			return response.status(500).send({
+				message: 'Result is not definite'
+			});
+		}
+
+		var row = result[0];
+
+		response.status(200).send({
+			forename: row.forename,
+			surname: row.surname,
+			email: row.email
+			// TODO: Privacy-Einstellungen senden
+		})
+	});
 }

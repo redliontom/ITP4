@@ -3,6 +3,29 @@ var sanitizer = require('sanitizer');
 
 var conString = 'postgres://admin:admin@localhost:5432/polaroid';
 
+exports.sql = function (string, callback) {
+	string = sanitizer.sanitize(string);
+
+	if (!string) {
+		return callback(new Error('Empty string provided'), null);
+	}
+
+	pg.connect(conString, function (error, client, done) {
+		if (error) {
+			return callback(error, null);
+		}
+
+		client.query(string, function (error, result) {
+			done();
+
+			if (error) {
+				return callback(error, null);
+			}
+
+			callback(result.rows);
+		});
+	});
+}
 
 exports.login = function(username, password, callback) {
 	username = sanitizer.sanitize(username);
