@@ -272,10 +272,13 @@ exports.changeUserMail = function (username, mail, callback) {
 	username = sanitizer.sanitize(username);
 	mail = sanitizer.sanitize(mail);
 
-	// TODO: Mail überprüfen und erneut Validierungsmail aussenden
+	// TODO: Mail überprüfen und erneut Validierungsmail 
+	var val = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;	
 
 	if (!mail) {
 		return callback(new Error('No mail provided'), null);
+	} else if (!val.test(mail)) {
+		return callback(new Error('Please provide a valid email address!'), null);
 	}
 
 	pg.connect(conString, function (error, client, done) {

@@ -573,7 +573,7 @@ function changeMail(request, response, next) {
 			return DB.changeUserMail(request.session.username, body.mail, function (error, result) {
 				if (error) {
 					logfile('error.log', error);
-					return response.status(500).send('Could not change mail');
+					return response.status(500).send(error);
 				} else if (result) {
 					return response.status(200).send('Success');
 				} else {
