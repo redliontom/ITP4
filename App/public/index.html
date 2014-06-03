@@ -10,14 +10,14 @@
 
 	<script src='//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js'></script>
 	<script type="text/javascript">
-    (function () {
+    /*(function () {
       var po = document.createElement('script');
       po.type = 'text/javascript';
       po.async = true;
       po.src = 'https://plus.google.com/js/client:plusone.js?onload=start';
       var s = document.getElementsByTagName('script')[0];
       s.parentNode.insertBefore(po, s);
-    })();
+    })();*/
   </script>
 </head>
 <body OnLoad="document.login.username.focus();">
@@ -44,17 +44,18 @@
 			</form>
             <hr class="gray">
             Or sign in with Google
-			<div id="signinButton" class="google_button">
-			  <span class="g-signin"
-			    data-scope="https://www.googleapis.com/auth/plus.login"
-			    data-clientid="1024308178797-54unkca3bga8f4palj4fvh6ulibag5mr.apps.googleusercontent.com"
-			    data-redirecturi="postmessage"
-			    data-accesstype="offline"
-			    data-cookiepolicy="single_host_origin"
-			    data-callback="signInCallback">
-			  </span>
-			</div>
-		</div>
+
+				<form id="gp_form" method="GET" action="https://accounts.google.com/o/oauth2/auth">
+                    <input type="hidden" name="scope" value="https://www.googleapis.com/auth/plus.login"></input>
+                    <input type="hidden" name="state" value="gpauth"></input>
+                    <input type="hidden" name="redirect_uri" value="http://localhost:8080/gpauth"></input>
+                    <input type="hidden" name="response_type" value="code"></input>
+                    <input type="hidden" name="client_id" value="1024308178797-54unkca3bga8f4palj4fvh6ulibag5mr.apps.googleusercontent.com"></input>
+                    <input type="hidden" name="access_type" value="offline"></input>
+                    <input type="hidden" name="cookiepolicy" value="single_host_origin"></input>
+                    <input type="image" src="img/Red-signin_Long_base_32dp.png" id="google_button" alt="Google+ Sign-In">
+                </form>
+            </div>
 		<footer id="index_footer">
 			polaroid © <script>document.write(new Date().getFullYear())</script> - English
 		</footer>
@@ -62,7 +63,7 @@
 	<script src="js/error_validation.js"></script>
 	<script type="text/javascript">
 		function signInCallback(authResult) {
-		  if (authResult['code']) {
+		 /* if (authResult['code']) {
 
 		    // Nach der Autorisierung des Nutzers nun die Anmeldeschaltfläche ausblenden, zum Beispiel:
 		    $('#signinButton').attr('style', 'display: none');
@@ -85,7 +86,7 @@
 		    //   "access_denied" – Der Nutzer hat den Zugriff für Ihre App abgelehnt.
 		    //   "immediate_failed" – Automatische Anmeldung des Nutzers ist fehlgeschlagen.
 		     console.log('Es gab einen Fehler: ' + authResult['Fehler']);
-		  }
+		  }*/
 		}
 		</script>
 	<footer class="start">

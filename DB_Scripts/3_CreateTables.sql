@@ -3,10 +3,11 @@ drop table if exists public.user cascade;
 create table public.user (
 	pk_user			serial unique not null,
 	email			text unique not null,
-	password		text not null,
+	password		text,
 	username		text primary key,
 	forename		text,
 	surname			text,
+	oauth_id		text,
 	status			boolean default false -- FALSE = private und TRUE = öffentlich
 );
 

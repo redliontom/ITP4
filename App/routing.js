@@ -61,7 +61,7 @@ module.exports = function (app) {
 
 	// GPAuth
 	app.route('/gpauth')
-	.all(redirectToHttps, checkAuthSession, oauth, function (request, response) {
+	.all(redirectToHttps, oauth, function (request, response) {
 		response.status(200).sendfile('./App/public/account/index.html');
 	});
 
@@ -223,8 +223,9 @@ function destroyAuthSession(request, response) {
 		response.clearCookie('series');
 		response.clearCookie('token');
 		request.session = null;
+
 		response.redirect('/');
-	});
+	})
 }
 
 function login(request, response, next) {
@@ -313,7 +314,6 @@ function forgot(request, response, next) {
 				if (error) {
 					logfile('error.log', error);
 				} else {
-					console.log(result[0]);
 					if (result[0]){
 						//Send reset mail
 						var domain = null;
@@ -407,7 +407,7 @@ function oauth(request, response, next) {
 
 	var clientId = '1024308178797-54unkca3bga8f4palj4fvh6ulibag5mr.apps.googleusercontent.com';
 	var clientSecret = 'sKGpMy0gSNXtCFJj-PMSBzZU';
-	var redirectUrl = 'postmessage';
+	var redirectUrl = 'http://localhost:8080/gpauth';
 	var scope = 'https://www.googleapis.com/auth/plus.login';
 
 	googleapis
@@ -417,40 +417,44 @@ function oauth(request, response, next) {
 		});
 
 	var oauth2 = new googleapis.OAuth2Client(clientId, clientSecret, redirectUrl);
-
-	oauth2.getToken(request.body.code, function (err, tokens) {
-		oauth2.credentials = tokens;
-		client.plus.people.get({
-			userId: 'me'
-		}).withAuthClient(oauth2)
-		  .execute(function (err, gpResult) {
-		  	if (gpResult) {
-		  		DB.checkOAuth(gpResult.id, function (error, result) {
-		  			if (error) {
-		  				logfile('error.log', error);
-		  				return next();
-		  			} else {
-		  				if (result == 1) {
-		  					createAuthSession(request, response, next, gpResult.nickname, true);
-		  					logfile('info.log', 'user \'' + gpResult.nickname + '\' logged in via google');
-
-		  				} else {
-		  					DB.signUpOAuth(gpResult.name.givenName, gpResult.name.familyName, gpResult.nickname, gpResult.emails, gpResult.id, function (error, result) {
-		  						if (error) {
-		  							return next();
-		  						} else {
-		  							createAuthSession(request, response, next, gpResult.nickname, true);
-		  							logfile('info.log', 'user \'' + gpResult.nickname + '\' logged in via google');
-		  						}
-		  					});
-		  				}
-		  			}
-		  		});
-		  	} else {
-		  		logfile('error.log', err);
-		  		return next();
-		  	}
-		  });
+	oauth2.getToken(request.query.code, function (err, tokens) {
+		if (!err){
+			oauth2.credentials = tokens;
+			client.plus.people.get({
+				userId: 'me'
+			}).withAuthClient(oauth2)
+			  .execute(function (err, gpResult) {
+			  	if (gpResult) {
+			  		DB.checkOAuth(gpResult.id, function (error, result) {
+			  			if (error) {
+			  				logfile('error.log', error);
+			  				return next();
+			  			} else {
+			  				if (result == 1) {
+			  					logfile('info.log', 'user \'' + gpResult.nickname + '\' logged in via google');
+			  					createAuthSession(request, response, next, gpResult.nickname, true);		  					
+			  				} else {
+			  					DB.signUpOAuth(gpResult.name.givenName, gpResult.name.familyName, gpResult.nickname, gpResult.emails[0].value, gpResult.id, function (error, result) {
+			  						if (error) {
+			  							logfile('error.log', error);
+			  							return next();
+			  						} else {
+			  							createAuthSession(request, response, next, gpResult.nickname, true);
+			  							logfile('info.log', 'user \'' + gpResult.nickname + '\' signedup in via google');
+			  						}
+			  					});
+			  				}
+			  			}
+			  		});
+			  	} else {
+			  		logfile('error.log', err);
+			  		return next();
+			  	}
+			  });
+		}else{
+			logfile('error.log', err);
+			return next();
+		}
 	});
 }
 

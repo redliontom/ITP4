@@ -119,11 +119,12 @@ $(document).ready(function() {
         });
         document.getElementById("subsection").innerHTML="Upload Image";
         profile();
-    });
-    
+    });   
 });
 
 
 function profile () {
    document.getElementById("profile_banner").innerHTML ="";
 }
+
+

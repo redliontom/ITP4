@@ -213,7 +213,7 @@ exports.destroyAuthSession = function (username, callback) {
 			if (error) {
 				return callback(error, null);
 			}
-
+			console.log(result.rows[0].retval);
 			callback(null, result.rows[0].retval);
 		});
 	});
