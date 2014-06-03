@@ -405,8 +405,8 @@ function oauth(request, response, next) {
 
 	var client;
 
-	var clientId = '1024308178797-54unkca3bga8f4palj4fvh6ulibag5mr.apps.googleusercontent.com';
-	var clientSecret = 'sKGpMy0gSNXtCFJj-PMSBzZU';
+	var clientId = '834016996628-0cnmggv39imegd1mvveu7qmh8aesm93k.apps.googleusercontent.com';
+	var clientSecret = 'Bv-fpD5IQDNikoWZialWZo9j';
 	var redirectUrl = 'http://localhost:8080/gpauth';
 	var scope = 'https://www.googleapis.com/auth/plus.login';
 
