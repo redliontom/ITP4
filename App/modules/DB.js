@@ -93,6 +93,27 @@ exports.getUserByMail = function(mail, callback){
 	});
 }
 
+exports.verifyChangePassword = function(id, username, callback){
+	id = sanitizer.sanitize(id);
+	username = sanitizer.sanitize(username);
+	
+	pg.connect(conString, function (error, client, done) {
+		if (error) {
+			return callback(error, null);
+		}
+
+		var query = client.query('select func_verify_change_password($1, $2) as retval', [id, username], function (error, result){
+			if (error){
+				callback(error, null);
+				done();
+			}else{
+				callback(null, result.rows[0].retval);
+				done();
+			}
+		});
+	});
+}
+
 exports.changePassword = function(password, id, callback){
 	password = sanitizer.sanitize(password);
 	id = sanitizer.sanitize(id);

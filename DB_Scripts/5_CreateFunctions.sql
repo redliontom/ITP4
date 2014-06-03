@@ -70,6 +70,14 @@ begin
 end
 $$language plpgsql;
 
+create or replace function func_verify_change_password(_id int, _username text)
+	returns text
+	as $$
+begin
+	return (select password from public.user where pk_user = _id AND username = _username); 
+end
+$$language plpgsql;
+
 
 create or replace function func_change_password(_password text, _pk_user int)
 	returns boolean

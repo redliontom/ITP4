@@ -27,10 +27,11 @@ module.exports = function (app) {
 	});
 
 	// Reset
-	app.route('/account/reset')
-	.all(redirectToHttps, checkAuthSession, reset, function (request, response) {
-		response.status(200).sendfile('./App/public/account/reset/index.html');
+	app.route('/reset')
+	.all(redirectToHttps, reset, function (request, response) {
+		response.status(200).sendfile('./App/public/reset/index.html');
 	});
+
 
 	// Settings
 	app.route('/account/settings')
@@ -296,9 +297,13 @@ function forgot(request, response, next) {
 	console.log('forgot');
 
 	try {
-		//Pickup transport method saves mail to a local directory
-		var transport = mail.createTransport("PICKUP", {
-			directory: require('path').dirname(require.main.filename) + "\\mails"
+		// Gmail Transport Method bis ein Webserver vorhanden ist
+		var transport = mail.createTransport("SMTP", {
+			service: "Gmail",
+		    auth: {
+		        user: "photoclubpolaroid@gmail.com",
+		        pass: "4ptiv0t0#klup"
+		    }
 		});
 
 		var body = request.body;
@@ -322,14 +327,21 @@ function forgot(request, response, next) {
 						var pw = result[0]['password'];
 						var key = crypto.createHash('md5').update(pw).digest('hex');
 						var mailOptions = {
-							from: "noreply@polaroidphotoclub.lu",
+							from: "Polaroid Photo Club <noreply@polaroidphotoclub.lu>",
 							to: result[0]['email'],
 							subject: "Password forgot!",
-							text: 'Follow the link to reset your password: ' + domain + '/account/reset?id=' + result[0]['pk_user'] + '&username' + result[0]['username'] + '=&key=' + key
+							text: 'Follow the link to reset your password: ' + domain + '/reset?id=' + result[0]['pk_user'] + '&username=' + result[0]['username'] + '&key=' + key
 						}
 
-						transport.sendMail(mailOptions);
-						response.redirect('/');
+						transport.sendMail(mailOptions, function(error, response){
+							if (error){
+								logfile('error.log', error);
+							}else{
+								console.log ("Message successful send!");
+							}
+						});	
+
+						response.redirect('/');					
 					}else{
 						response.redirect('/account/forgot');
 					}
@@ -347,21 +359,38 @@ function forgot(request, response, next) {
 function reset(request, response, next) {
 	console.log('reset');
 
-	//TO-DO: Prüfen der Parameter, um das ändern beliebiger Passwörter zu unterbinden
 	try {
 		var params = request.query;
 
-		if (params['id']) {
-			var body = request.body;
+		// Zugang zum PW-Reset nur, wenn alle Get-Parameter der Mail vorhanden sind.
+		if (params.id && params.key && params.username){
 
-			DB.changePassword(body.password, params.id, function (error, result) {
-				if (error) {
-					logfile('error.log', error);
-					return next();
-				}
+			// Wenn Sendmethode POST ist und Passwort gültig
+			if (request.method == 'POST' && request.body.password == request.body.confirmpassword){
 
-				response.redirect('/account');
-			});
+				// Passwort aus der Datenbank holen, hashen und mit Key vom Get-Parameter abgleichen.
+				DB.verifyChangePassword(params.id, params.username, function(error, result){
+
+					var key = crypto.createHash('md5').update(result).digest('hex');
+					if (params.key == key){
+						var body = request.body;
+
+						// Alles in Ordnung -> Passwort ändern
+						DB.changePassword(body.password, params.id, function (error, result) {
+							if (error) {
+								logfile('error.log', error);
+								return next();
+							}
+							response.redirect('/account');
+						});
+					}else{
+						response.redirect('/');
+					}
+				});
+			// Wenn Methode GET, oder das PW ungültig nur die Resetpage anzeigen
+			}else{
+				response.status(200).sendfile('./App/public/reset/index.html');
+			}	
 		}else{
 			response.redirect('/');
 		}
