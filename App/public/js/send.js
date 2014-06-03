@@ -109,6 +109,18 @@ $( document ).ready(function() {
 	        }, 3000);  
            
         } else {
+            var val = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;	
+	       if (!val.test(mail))
+	       {
+               $('#response').addClass('send_message_error');
+               $('#response').css('visibility', 'visible');
+               $('#response').html('<i class="fa fa-exclamation-triangle"></i> Please provide a valid email address!');
+                setTimeout(function() {   
+                    $('#response').css('visibility', 'hidden');
+                    $('#response').removeClass('send_message_error');
+	           }, 3000);  
+               return false;
+           }
             $('#submit').attr('disabled');
             var data = {};
             data.mail = mail;
