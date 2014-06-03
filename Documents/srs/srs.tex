@@ -184,6 +184,55 @@
 	\subsection{Systemschnittstellen}
 		\subsubsection{Webseite}
 		\subsubsection{Webserver}
+			Der Webserver kommuniziert über Expressjs mit dem Client. Zuerst wird der Port angebunden und dann werden alle Requests an Expressjs weitergeleitet. Expressjs sendet dann den Verarbeiteten Request an das Routingmodul. Das Routingmodul hat wiederum eine Anbindung mit dem DB-Modul. Das DB-Modul kapselt dann schließlich die Datenbank zugriffe.\\
+			
+			\noindent Expressjs selber hat zusätzlich noch einiges an Middleware die hier kurz zusammengefasst werden soll.
+			
+			\paragraph{connect-multiparty}
+			Dient dazu Form-Requests die mit dem \textit{enctype} 'multipart/form-data' gesendet werden, auch erfolgreich zu verarbeiten. Im wensentlichen wird der gesendet Body verarbeitet und in einem JSON Objekt gekapselt über den Request gesendet.
+			
+			\paragraph{body-parser}
+			Dieses Middleware dient der Vorverarbeitung von Request-Bodies. Dazu wird der gesendete Body des Clients in ein JSON Objekt gekapselt. Um jedoch Binärdaten übertragen zu können, muss das zuvor erwähnte connect-multiparty Middleware dazu installiert werden.
+			
+			\paragraph{cookie-parser}
+			Dieses Middleware dient dazu die vom Client gesendeten Cookies in ein einfach zu lesendes Array zu laden.
+			
+			\paragraph{cookie-session}
+			Dieses Middleware erlaubt es Signed-Cookies zu übertragen und zu interpretieren.
+			
+			\paragraph{express-session}
+			Einfach gesagt erlaubt dieses Middleware die Manipulation von der Client-Session. Hierfür wird eine eigene Sessionvariable angelegt die man beliebig ändern kann.
+			
+			\paragraph{Session}
+			Es werden zum Teil wichtige Variablen in die Session gespeichert. Lesen kann man sie durch den Request mit der folgenden Syntax '\textit{request.session.$<$variable$>$}. Nachfolgend werden die existierenden Variablen samt Bedeutung beschrieben:
+			
+			\begin{center}
+			\begin{tabular}{|l|l|}
+			\hline
+			\bf Variable & \bf Bedeutung \\
+			\hline
+			username & Speichert den Anwendernamen. \\
+			\hline
+			\end{tabular}
+			\end{center}
+			
+			\paragraph{Schnittstellen}
+			\begin{center}
+			\begin{tabular}{|lcr|}
+			\hline
+			Nodejs & $\Leftrightarrow$ & Expressjs \\
+			\hline
+			Expressjs & $\Leftrightarrow$ & Middleware \\
+			\hline
+			Expressjs & $\Leftrightarrow$ & Routing \\
+			\hline
+			Routing & $\Leftrightarrow$ & DB \\
+			\hline
+			DB & $\Leftrightarrow$ & Datenbank \\
+			\hline
+			\end{tabular}
+			\end{center}
+			
 		\subsubsection{Datenbank}
 
 			\begin{figure}[H]
