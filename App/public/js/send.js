@@ -1,4 +1,60 @@
 $( document ).ready(function() {
+    //********************************************************************
+    //          Upload
+    //********************************************************************
+    $('#formUpload').submit(function(){
+        var title = document.forms["formUpload"]["title"].value;
+        var camera = document.forms["formUpload"]["camera"].value;
+        var focal = document.forms["formUpload"]["focal"].value;
+        var exposure = document.forms["formUpload"]["exposure"].value;
+        var aperture = document.forms["formUpload"]["aperture"].value;
+        var iso = document.forms["formUpload"]["iso"].value;
+        var picture = document.forms["formUpload"]["picture"].files;
+        if ((title==null || title=="") & (picture==null || picture==""))
+        {
+            $('#response').addClass('send_message_error');
+            $('#response').css('visibility', 'visible');
+            $('#response').html('<i class="fa fa-exclamation-triangle"></i> All fields are required!');
+            setTimeout(function() {   
+                $('#response').css('visibility', 'hidden');
+                $('#response').removeClass('send_message_error');
+	        }, 3000);  
+           
+        } else {
+            $('#submit').attr('disabled');
+            var data = {};
+            data.title = title;
+            data.camera = camera;
+            data.focal = focal;
+            data.exposure = exposure;
+            data.aperture = aperture;
+            data.iso = iso;
+            data.picture = picture;
+            $.ajax({
+                type: 'POST',
+                url: '/account/upload',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                success: function(msg) {
+                    $('#response').addClass('send_message_success');
+                    $('#response').css('visibility', 'visible');
+                    $('#response').html('<i class="fa fa-check"></i> '+ msg);
+                    setTimeout(function() {   
+                        $('#response').css('visibility', 'hidden');
+                        $('#response').removeClass('send_message_success');
+                        $('#popup_name').css('visibility', 'hidden');
+                        $('#popup_background').css('visibility', 'hidden');
+	               }, 3000);
+                }
+            });
+        }
+        return false;
+    });
+    
+    
+    //********************************************************************
+    //          Settings
+    //********************************************************************
     //Form Name
     $('#form_name').submit(function(){
         var forename = document.forms["form_name"]["forename"].value;
