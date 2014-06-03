@@ -35,7 +35,7 @@ module.exports = function (app) {
 	// Settings
 	app.route('/account/settings')
 	.all(redirectToHttps, checkAuthSession)
-	.post(changeName, changeMail, changePassword, sendSettings, function (request, response) {
+	.post(changeName, changeMail, changePassword, changePrivacy, sendSettings, function (request, response) {
 		response.redirect('/account');
 	})
 	.get(function (request, response) {
@@ -618,11 +618,12 @@ function changePassword(request, response, next) {
 
 function changePrivacy(request, response, next) {
 	// TODO: alles!!!
+	return next();
 }
 
 function sendSettings(request, response, next) {
 	console.log('sendSettings');
-	DB.sql('select forename, surname, email, status from public.user where username=' + request.session.username, function (error, result) {
+	DB.sql('select forename, surname, email, status from public.user where username=\'' + request.session.username + '\'', function (error, result) {
 		if (error) {
 			return response.status(500).send('Could not read from database');
 		} else if (result.length > 1) {
