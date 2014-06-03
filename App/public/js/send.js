@@ -41,8 +41,8 @@ $( document ).ready(function() {
     
     //Form Mail
     $('#form_mail').submit(function(){
-        var mail = document.forms["form_mail"]["mail"].value;
-        if (mail==null || mail=="")
+        var email = document.forms["form_mail"]["mail"].value;
+        if (email==null || email=="")
         {
             $('#response').addClass('send_message_error');
             $('#response').css('visibility', 'visible');
@@ -55,7 +55,7 @@ $( document ).ready(function() {
         } else {
             $('#submit').attr('disabled');
             var data = {};
-            data.mail = mail;
+            data.email = email;
             $.ajax({
                 type: 'POST',
                 url: '/account/settings',
