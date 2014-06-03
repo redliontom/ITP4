@@ -22,7 +22,7 @@ exports.sql = function (string, callback) {
 				return callback(error, null);
 			}
 
-			callback(result.rows);
+			callback(null, result.rows);
 		});
 	});
 }

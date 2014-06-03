@@ -83,11 +83,11 @@ $( document ).ready(function() {
                     $('#response').addClass('send_message_success');
                     $('#response').css('visibility', 'visible');
                     $('#response').html('<i class="fa fa-check"></i> '+ msg);
+                    $('#popup_name').css('visibility', 'hidden');
+                    $('#popup_background').css('visibility', 'hidden');
                     setTimeout(function() {   
                         $('#response').css('visibility', 'hidden');
                         $('#response').removeClass('send_message_success');
-                        $('#popup_name').css('visibility', 'hidden');
-                        $('#popup_background').css('visibility', 'hidden');
 	               }, 3000);
                 }
             });
@@ -109,6 +109,7 @@ $( document ).ready(function() {
 	        }, 3000);  
            
         } else {
+            var val = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;	
             if (!val.test(mail))
 	       {
                $('#response').addClass('send_message_error');
@@ -132,11 +133,11 @@ $( document ).ready(function() {
                     $('#response').addClass('send_message_success');
                     $('#response').css('visibility', 'visible');
                     $('#response').html('<i class="fa fa-check"></i> '+ msg);
+                    $('#popup_mail').css('visibility', 'hidden');
+                    $('#popup_background').css('visibility', 'hidden');
                     setTimeout(function() {   
                         $('#response').css('visibility', 'hidden');
                         $('#response').removeClass('send_message_success');
-                        $('#popup_name').css('visibility', 'hidden');
-                        $('#popup_background').css('visibility', 'hidden');
 	               }, 3000);
                 },
                     statusCode: {
@@ -144,22 +145,22 @@ $( document ).ready(function() {
                             $('#response').addClass('send_message_error');
                             $('#response').css('visibility', 'visible');
                             $('#response').html('<i class="fa fa-exclamation-triangle"></i> Please provide a valid email address!');
+                            $('#popup_mail').css('visibility', 'hidden');
+                            $('#popup_background').css('visibility', 'hidden');
                             setTimeout(function() {   
                                 $('#response').css('visibility', 'hidden');
                                 $('#response').removeClass('send_message_error');
-                                $('#popup_name').css('visibility', 'hidden');
-                                $('#popup_background').css('visibility', 'hidden');
 	                       }, 3000);
                         },
                         406: function(msg) {
                             $('#response').addClass('send_message_error');
                             $('#response').css('visibility', 'visible');
                             $('#response').html('<i class="fa fa-exclamation-triangle"></i> Could not verifiy username!');
+                            $('#popup_mail').css('visibility', 'hidden');
+                            $('#popup_background').css('visibility', 'hidden');
                             setTimeout(function() {   
                                 $('#response').css('visibility', 'hidden');
                                 $('#response').removeClass('send_message_error');
-                                $('#popup_name').css('visibility', 'hidden');
-                                $('#popup_background').css('visibility', 'hidden');
 	                       }, 3000);
                         }
                     }
@@ -200,11 +201,11 @@ $( document ).ready(function() {
                         $('#response').addClass('send_message_success');
                         $('#response').css('visibility', 'visible');
                         $('#response').html('<i class="fa fa-check"></i> '+ msg);
+                        $('#popup_password').css('visibility', 'hidden');
+                        $('#popup_background').css('visibility', 'hidden');
                         setTimeout(function() {   
                             $('#response').css('visibility', 'hidden');
                             $('#response').removeClass('send_message_success');
-                            $('#popup_name').css('visibility', 'hidden');
-                            $('#popup_background').css('visibility', 'hidden');
 	                   }, 3000);
                     }
                 });
@@ -222,3 +223,19 @@ $( document ).ready(function() {
         return false;
     });
 });
+
+function load_data() {
+     var data = {};
+     $.ajax({
+        type: 'POST',
+        url: '/account/settings',
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function(data) {
+            console.log('success');
+        }
+    });
+}
+
+
+
