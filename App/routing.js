@@ -466,7 +466,7 @@ function upload(request, response, next) {
 							logfile('error.log', error);
 
 							return response.send(500, {
-								message: 'Invalide image data'
+								message: 'Invalid image data'
 							});
 						} else {
 							fs.rename(picture.path, path + '/original/' + filename);
@@ -519,6 +519,17 @@ function randomString(count){
 	return value.join('');
 }
 
+/*
+Funktion kapselt die Resize und Crop Funktion.
+
+Der Grund ist dass man den Code auswechseln kann ohne die Uploadlogik ansich zu ändern.
+Falls zb ein anderes Tool wie derzeit ImageMagick verwendet werden soll, dann kann man
+dies tun indem man einfach den nachfolgenden Code ändert.
+
+\param path Pfad zum User-Folder
+\param filename Der derzeitige Dateiname des Bildes
+\param callback Funktion wird bei Fehler oder Erfolg aufgerufen. function (error) { ... }
+ */
 function imageResizeCrop(path, filename, callback)
 {
 	var original = path + '/original/' + filename;
