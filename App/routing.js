@@ -664,7 +664,7 @@ function sendSettings(request, response, next) {
 		response.status(200).send({
 			forename: row.forename,
 			surname: row.surname,
-			email: row.email
+			mail: row.email
 			// TODO: Privacy-Einstellungen senden
 		})
 	});
