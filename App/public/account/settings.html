@@ -48,7 +48,7 @@
             <a  id="close" href="#" onclick="popup('popup_name');"><i class="fa fa-minus-square" ></i></a> 
         </div>	
         <div class="popup_content">
-            <form action="/account/settings" method="post" name="form_name" id="form_name" role="form" accept-charset="utf-8" onsubmit="return validateForm()">
+            <form action="/account/settings" method="post" name="form_name" id="form_name" role="form" accept-charset="utf-8">
                 Forename
                 <input class="input_text" type="text" name="forename" value="" placeholder="David">
                 Surname
@@ -67,7 +67,7 @@
             <a  id="close" href="#" onclick="popup('popup_mail');"><i class="fa fa-minus-square" ></i></a> 
         </div>	
         <div class="popup_content">
-            <form action="/account/settings" method="post" name="form-mail" role="form" accept-charset="utf-8">
+            <form action="/account/settings" method="post" name="form_mail" id="form_mail" role="form" accept-charset="utf-8">
                 Email address
                 <input class="input_text" type="text" name="mail" value="" placeholder="david.wolf@example.com">
                 <span class="btn_rigt">
@@ -84,7 +84,7 @@
             <a  id="close" href="#" onclick="popup('popup_password');"><i class="fa fa-minus-square" ></i></a> 
         </div>	
         <div class="popup_content">
-            <form action="/account/settings" method="post" name="form-password" role="form" accept-charset="utf-8">
+            <form action="/account/settings" method="post" name="form_password" id="form_password" role="form" accept-charset="utf-8">
                 Current
                 <input class="input_text" type="password" name="old_password">
                 New
