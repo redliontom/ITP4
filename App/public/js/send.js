@@ -233,9 +233,30 @@ function load_data() {
         contentType: 'application/json',
         success: function(data) {
             console.log('success');
+            recive_data();
         }
     });
 }
 
-
+function recive_data() {
+    $.post('/account/settings', function(data) {
+	   $("#td_name").html("");
+	   $.each(data, function() {
+           $("#td_name").html("");
+           $("#td_name").append(data.forename + ' ' + data.surname);	
+           document.forms["form_name"]["forename"].value=data.forename;
+           document.forms["form_name"]["surname"].value=data.surname;
+           $("#td_mail").html("");
+           $("#td_mail").append(data.mail);
+           document.forms["form_mail"]["mail"].value=data.mail;
+           if (data.status)
+           {
+               $("#td_stuff").html("Anyone");
+           } else {
+               $("#td_stuff").html("Friends");
+           }
+           console.log(data.forename);
+	   });	
+    },"json");
+}
 

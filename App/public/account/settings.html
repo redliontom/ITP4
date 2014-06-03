@@ -18,7 +18,7 @@
             </tr>
             <tr>
                 <th>Email</th>
-                <td> david.wolf@example.com</td>
+                <td id="td_mail"></td>
                 <td class="table_right"><a href="#" onclick="popup('popup_mail');"><i class="fa fa-pencil"></i></a></td>
             </tr>
             <tr>
@@ -36,7 +36,7 @@
         <table>
             <tr>
                 <th>Who can see my stuff?</th>
-                <td>Friends</td>
+                <td id="td_stuff">Friends</td>
                 <td class="table_right"><a href="#" onclick="popup('popup_settings');"><i class="fa fa-pencil"></i></a></td>
             </tr>
         </table>
@@ -53,9 +53,9 @@
         <div class="popup_content">
             <form action="/account/settings" method="post" name="form_name" id="form_name" role="form" accept-charset="utf-8">
                 Forename
-                <input class="input_text" type="text" name="forename" value="" placeholder="David">
+                <input class="input_text" type="text" name="forename" value="" placeholder="Forename">
                 Surname
-                <input class="input_text" type="text" name="surname" value="" placeholder="Wolf">
+                <input class="input_text" type="text" name="surname" value="" placeholder="Surname">
                 <span class="btn_rigt">
                     <button class="button_submit" type="submit" id="submit" name="submit">Save changes</button>
                 </span>
@@ -72,7 +72,7 @@
         <div class="popup_content">
             <form action="/account/settings" method="post" name="form_mail" id="form_mail" role="form" accept-charset="utf-8">
                 Email address
-                <input class="input_text" type="text" name="mail" value="" placeholder="david.wolf@example.com">
+                <input class="input_text" type="text" name="mail" value="" placeholder="Email address">
                 <span class="btn_rigt">
                     <button class="button_submit" type="submit" id="submit" name="submit">Save changes</button>
                 </span>
