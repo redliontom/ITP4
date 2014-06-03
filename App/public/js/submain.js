@@ -21,12 +21,22 @@
                $("#content_container").animate({opacity:"1", filter:"alpha(opacity=100)"}, 200);
             });
         });
-        $("#profile_banner").animate({opacity:"0", filter:"alpha(opacity=0)"}, 200, function() {
-            $("#profile_banner").load("../account/profile_header.html", function() {
-               $("#profile_banner").animate({opacity:"1", filter:"alpha(opacity=100)"}, 200);
+    });
+
+    $("#m-allphotos").click(function() {
+        $("#content_container").animate({opacity:"0", filter:"alpha(opacity=0)"}, 200, function() {
+            $("#content_container").load("../account/myphotos.html", function() {
+               $("#content_container").animate({opacity:"1", filter:"alpha(opacity=100)"}, 200);
             });
         });
-        document.getElementById("subsection").innerHTML="chronos38";
+    });
+
+    $("#m-friends").click(function() {
+        $("#content_container").animate({opacity:"0", filter:"alpha(opacity=0)"}, 200, function() {
+            $("#content_container").load("../account/friends.html", function() {
+               $("#content_container").animate({opacity:"1", filter:"alpha(opacity=100)"}, 200);
+            });
+        });
     });
 
     $("#m-land").click(function() {
