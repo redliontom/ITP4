@@ -144,7 +144,7 @@ function checkAuthSession(request, response, next) {
 				logfile('error.log', 'unauthorized access via cookie for user "' + cookies.username + '"');
 				// TODO: Sende eine Warnung an den Client dass es einen unathorisierten Zugriff gegeben hat.
 				if (request.path == '/') {
-					return next();
+					return response.status(403).send('Unauthorized access'); // INFO: Eventuell abändern
 				} else {
 					return response.redirect('/');
 				}
@@ -432,9 +432,10 @@ function upload(request, response, next) {
 
 	try {
 		var body = request.body;
-		var files = request.files;
+		//var files = request.files;
 
-		if (body && files && files.picture) {			
+		//if (body && files && files.picture) {			
+		if (body && body.picture && body.title) {
 			var picture = files.picture;
 			var filename = randomString(8) + "_" + picture.name;
 			var title = body.title;
@@ -452,10 +453,7 @@ function upload(request, response, next) {
 				});
 			} else if (!title) {
 				logfile('error.log', 'No image title');
-
-				return response.send(406, {
-					message: 'Picture title could not be validated'
-				});
+				return response.status(406).send('Picture title could not be validated');
 			}
 
 			switch (picture.type) {
@@ -464,43 +462,31 @@ function upload(request, response, next) {
 					DB.savePictureInfos(request.session.username, title, filename, 0, aperture, exposure, focal, iso, function (error, result) {
 						if (error) {
 							logfile('error.log', error);
-
-							return response.send(500, {
-								message: 'Invalid image data'
-							});
+							return response.status(500).send('Invalid image data');
 						} else {
 							fs.rename(picture.path, path + '/original/' + filename);
 							imageResizeCrop(path, filename, function (error) {
 								if (error) {
 									logfile('error.log', error);
-
-									return response.send(500, {
-										message: 'Could not resize image'
-									});
+									return response.status(500).send('Could not resize image');
 								}
 
-								return next(); // TODO: Auf response.send(...) abändern sobald der client auf den response reagiert.
+								response.status(200).send('Upload successful');
 							});
 						}
 					});
 					break;
 				default:
 					logfile('error.log', 'invalid MIME type "' + picture.type + '" for user "' + request.session.username + '"');
-
-					return response.send(403, {
-						message: 'Tried to upload invalid MIME-Type "' + picture.type + '".'
-					});
-					break;
+					return response.status(403).send('Tried to upload invalid MIME-Type "' + picture.type + '".');
 			}
 		} else {
-			return next();
+			return response.status(406).send('No title and/or image provided');
 		}
 	} catch (e) {
 		logfile('error.log', e);
 
-		return response.send(500, {
-			message: 'Could not load picture.'
-		});
+		return response.status(500).send('Could not load picture');
 	}
 }
 
@@ -562,18 +548,12 @@ function changeName(request, response, next) {
 			return DB.changeUserName(request.session.username, body.forename, body.surname, function (error, result) {
 				if (error) {
 					logfile('error.log', error);
-					return response.status(500).send({
-						message: 'Could not change name'
-					});
+					return response.status(500).send('Could not change name');
 				} else if (result) {
-					return response.status(200).send({
-						message: 'Success'
-					});
+					return response.status(200).send('Success');
 				} else {
 					logfile('error.log', 'Invalid username: ' + request.session.username);
-					return response.status(406).send({
-						message: 'Could not verify username'
-					});
+					return response.status(406).send('Could not verify username');
 				}
 			});
 		} else {
@@ -593,18 +573,12 @@ function changeMail(request, response, next) {
 			return DB.changeUserMail(request.session.username, body.mail, function (error, result) {
 				if (error) {
 					logfile('error.log', error);
-					return response.status(500).send({
-						message: 'Could not change mail'
-					});
+					return response.status(500).send('Could not change mail');
 				} else if (result) {
-					return response.status(200).send({
-						message: 'Success'
-					});
+					return response.status(200).send('Success');
 				} else {
 					logfile('error.log', 'Invalid username: ' + request.session.username);
-					return response.status(406).send({
-						message: 'Could not verify username'
-					});
+					return response.status(406).send('Could not verify username');
 				}
 			});
 		} else {
@@ -624,18 +598,12 @@ function changePassword(request, response, next) {
 			return DB.changeUserPassword(request.session.username, body.old_password, body.new_password_1, body.new_password_2, function (error, result) {
 				if (error) {
 					logfile('error.log', error);
-					return response.status(500).send({
-						message: 'Could not change password'
-					});
+					return response.status(500).send('Could not change password');
 				} else if (result) {
-					return response.status(200).send({
-						message: 'Success'
-					});
+					return response.status(200).send('Success');
 				} else {
 					logfile('error.log', 'Invalid username and/or password: ' + request.session.username);
-					return response.status(406).send({
-						message: 'Could not verify username'
-					});
+					return response.status(406).send('Could not verify username');
 				}
 			});
 		} else {
@@ -650,13 +618,9 @@ function sendSettings(request, response, next) {
 	console.log('sendSettings');
 	DB.sql('select forename, surname, email from public.user where username=' + request.session.username, function (error, result) {
 		if (error) {
-			return response.status(500).send({
-				message: 'Could not read from database'
-			});
+			return response.status(500).send('Could not read from database');
 		} else if (result.length > 1) {
-			return response.status(500).send({
-				message: 'Result is not definite'
-			});
+			return response.status(500).send('Result is not definite');
 		}
 
 		var row = result[0];
