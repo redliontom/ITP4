@@ -223,7 +223,18 @@ exports.savePictureInfos = function (username, name, directory, flash, aperture,
 	});
 };
 
-//Test
-/*exports.login('testuser', 'password', function(e) {
-	//console.log(e);
-});*/
+exports.changeUserName = function (username, forename, surname) {
+	username = sanitizer.sanitize(username);
+	forename = sanitizer.sanitize(forename);
+	surname = sanitizer.sanitize(surname);
+
+	pg.connect(conString, function (error, client, done) {
+		if (error) {
+			return callback(error, null);
+		}
+
+		client.query('select func_change_user_name($1, $2, $3) as retval', [username, forename, surname], function (error, result) {
+			// TODO: all!!!
+		});
+	});
+};

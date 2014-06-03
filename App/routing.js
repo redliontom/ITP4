@@ -8,23 +8,41 @@ var googleapis = require('googleapis'),
     OAuth2 = googleapis.auth.OAuth2;
 
 module.exports = function (app) {
-	// html
+	// Login
 	app.route('/')
 	.all(redirectToHttps, checkAuthSession, login, function (request, response) {
 		response.status(200).sendfile('./App/public/index.html');
 	});
+
+	// Signup
 	app.route('/account/signup')
 	.all(redirectToHttps, signup, function (request, response) { // Es wird keine Authentifizierung vorgenommen
 		response.status(200).sendfile('./App/public/account/signup/index.html');
 	});
+
+	// Forgot
 	app.route('/account/forgot')
 	.all(redirectToHttps, forgot, function (request, response) { // Es wird keine Authentifizierung vorgenommen
 		response.status(200).sendfile('./App/public/account/forgot/index.html');
 	});
+
+	// Reset
 	app.route('/account/reset')
 	.all(redirectToHttps, checkAuthSession, reset, function (request, response) {
 		response.status(200).sendfile('./App/public/account/reset/index.html');
 	});
+
+	// Settings
+	app.route('/account/settings')
+	.all(redirectToHttps, checkAuthSession)
+	.post(settings, function (request, response) {
+		response.redirect('/account');
+	})
+	.get(function (request, response) {
+		response.redirect('/account');
+	});
+
+	// Upload
 	app.route('/account/upload')
 	.post(redirectToHttps, checkAuthSession, upload, function (request, response) {
 		response.redirect('/account');
@@ -32,10 +50,14 @@ module.exports = function (app) {
 	.get(redirectToHttps, checkAuthSession, function (request, response) {
 		response.redirect('/account');
 	});
+
+	// Account
 	app.route('/account')
 	.all(redirectToHttps, checkAuthSession, account, function (request, response) {
 		response.status(200).sendfile('./App/public/account/index.html');
 	});
+
+	// GPAuth
 	app.route('/gpauth')
 	.all(redirectToHttps, checkAuthSession, oauth, function (request, response) {
 		response.status(200).sendfile('./App/public/account/index.html');
@@ -517,4 +539,55 @@ function imageResizeCrop(path, filename, callback)
 				return callback();
 			});
 	});
+}
+
+function settings(request, response, next) {
+	var body = request.body;
+
+	if (body) {
+		if (body.forename && body.surname) {
+			return DB.changeUserName(request.session.username, body.forename, body.surname, function (error, result) {
+				if (error) {
+					logfile('error.log', error);
+					return response.status(500).send({
+						message: 'Could not change name'
+					});
+				}
+				// TODO: Response für Namen senden
+				return next();
+			})
+		}
+
+		if (body.mail) {
+			return DB.changeUserMail(request.session.username, body.mail, function (error, result) {
+				if (error) {
+					logfile('error.log', error);
+					return response.status(500).send({
+						message: 'Could not change mail'
+					});
+				}
+				// TODO: eMail response senden
+				return next();
+			});
+		}
+
+		if (body.old_password && body.new_password_1 && body.new_password_2) {
+			return DB.changeUserPassword(request.session.username, body.old_password, body.new_password_1, body.new_password_2, function (error, result) {
+				if (error) {
+					logfile('error.log', error);
+					return response.status(500).send({
+						message: 'Could not change password'
+					});
+				}
+				// TODO: Passwort response senden
+				return next();
+			});
+		}
+
+		return response.status(406).send({
+			message: 'No arguments supplied'
+		});
+	} else {
+		return next();
+	}
 }
