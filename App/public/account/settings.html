@@ -1,5 +1,9 @@
 <script src="../js/send.js"></script>
 <script src="../js/popup.js"></script>
+<script type="text/javascript">
+    load_data();
+
+</script>
 <!--Response Message -->
 <div id="response" class="send_message"></div>
 <div id="content_container_small">
@@ -10,7 +14,7 @@
         <table>
             <tr>
                 <th>Name</th>
-                <td>David Wolf</td>
+                <td id="td_name"></td>
                 <td class="table_right"><a href="#" onclick="popup('popup_name');"><i class="fa fa-pencil"></i></a></td>
             </tr>
             <tr>

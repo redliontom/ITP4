@@ -222,3 +222,18 @@ $( document ).ready(function() {
         return false;
     });
 });
+
+function load_data() {
+     var data = {};
+     $.ajax({
+        type: 'POST',
+        url: '/account/settings',
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function(data) {
+            console.log('success');
+        }
+    });
+}
+
+
