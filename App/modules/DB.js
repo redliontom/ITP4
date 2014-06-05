@@ -41,7 +41,6 @@ exports.login = function(username, password, callback) {
 				callback(err);
 				done();
 			} else {
-				//console.log('%s', result.rows[0].retval);
 				callback(null, result.rows[0].retval);
 				done(); // Wichtig sonst werden Clients geleakt.
 			}
@@ -213,7 +212,7 @@ exports.destroyAuthSession = function (username, callback) {
 			if (error) {
 				return callback(error, null);
 			}
-			console.log(result.rows[0].retval);
+
 			callback(null, result.rows[0].retval);
 		});
 	});

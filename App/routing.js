@@ -122,62 +122,63 @@ function redirectToHttps(request, response, next) {
 function checkAuthSession(request, response, next) {
 	console.log('checkAuthSession');
 	var cookies = request.signedCookies;
+	var username = null;
+	var series = null;
+	var token = null;
+	var remember = false;
 
 	if (request.session.username) {
-		if (request.path.indexOf('/account') != -1) {
+		username = request.session.username;
+		series = request.session.series;
+		token = request.session.token;
+		remember = request.session.remember;
+	} else if (cookies.username) {
+		username = cookies.username;
+		series = cookies.series;
+		token = cookies.token;
+		remember = true;
+	}
+
+	DB.checkAuthSession(username, series, token, function (error, result) {
+		if (error) {
+			logfile('error.log', error);
+
+			if (request.path == '/') {
+				return next();
+			} else {
+				return response.redirect('/');
+			}
+		} else if (result) {
+			createAuthSession(request, response, next, username, remember);
+		} else if (request.path == '/') {
 			return next();
 		} else {
-			return response.redirect('/account');
+			logfile('error.log', 'unauthorized access via cookie for user "' + cookies.username + '"');
+			return response.status(403).send('Unauthorized access');
 		}
-	} else if (cookies.username && cookies.series && cookies.token) {
-		DB.checkAuthSession(cookies.username, cookies.series, cookies.token, function (error, result) {
-			if (error) {
-				logfile('error.log', error);
-
-				if (request.path == '/') {
-					return next();
-				} else {
-					return response.redirect('/');
-				}
-			} else if (result) {
-				createAuthSession(request, response, next, cookies.username, true);
-			} else {
-				logfile('error.log', 'unauthorized access via cookie for user "' + cookies.username + '"');
-				// TODO: Sende eine Warnung an den Client dass es einen unathorisierten Zugriff gegeben hat.
-				if (request.path == '/') {
-					return response.status(403).send('Unauthorized access'); // INFO: Eventuell abändern
-				} else {
-					return response.redirect('/');
-				}
-			}
-		});
-	} else if (request.path == '/') {
-		return next();
-	} else {
-		response.redirect('/');
-	}
+	});
 }
 
-function createAuthSession(request, response, next, username, cookie) {
+function createAuthSession(request, response, next, username, remember) {
 	console.log('createAuthSession');
 
 	// INFO: Node.js wird die Crypto API sehr wahrscheinlich umschreiben. Bei Updates muss darauf geachtet werden.
-	crypto.randomBytes(512, function (error, result) {
+	crypto.randomBytes(128, function (error, result) {
 		console.log('series');
 		if (error) {
 			logfile('error.log', '"' + username + '" ' + error);
-			return next(); // TODO: Sende error an den client
+			return response.status(500).send('Could not create series');
 		}
 
 		var sha1 = crypto.createHash('sha1');
 		sha1.update(result, 'binary');
 		var series = sha1.digest('hex');
 
-		crypto.randomBytes(512, function (error, result) {
+		crypto.randomBytes(128, function (error, result) {
 			console.log('token');
 			if (error) {
 				logfile('error.log', '"' + username + '" ' + error);
-				return next(); // TODO: Sende error an den client
+				return response.status(500).send('Could not create token');
 			}
 
 			sha1 = crypto.createHash('sha1');
@@ -188,25 +189,33 @@ function createAuthSession(request, response, next, username, cookie) {
 				console.log('DB');
 				if (error) {
 					logfile('error.log', '"' + username + '" ' + error);
-					return next(); // TODO: Sende error an den client
+					return response.status(500).send('Could not verify user through database');
 				}
 
 				var date = new Date(Date.now());
 				date.setFullYear(date.getFullYear() + 10);
 
-				if (cookie && result) {
-					// TODO: Cookie option 'secure' auf TRUE setzen sobald HTTPS funktioniert.
-					response.cookie('username', username, { expires: date, signed: true/*, secure: true*/ });
-					response.cookie('series', series, { expires: date, signed: true/*, secure: true*/ });
-					response.cookie('token', token, { expires: date, signed: true/*, secure: true*/ });
-				}
+				if (result) {
+					if (remember) {
+						// TODO: Cookie option 'secure' auf TRUE setzen sobald HTTPS funktioniert.
+						response.cookie('username', username, { expires: date, signed: true/*, secure: true*/ });
+						response.cookie('series', series, { expires: date, signed: true/*, secure: true*/ });
+						response.cookie('token', token, { expires: date, signed: true/*, secure: true*/ });
+					}
 
-				request.session.username = username;
+					request.session.username = username;
+					request.session.series = series;
+					request.session.token = token;
+					request.session.remember = remember;
 
-				if (request.path.indexOf('/account') != -1) {
-					return next();
+					if (request.path.indexOf('/account') != -1) {
+						return next();
+					} else {
+						return response.redirect('/account');
+					}
 				} else {
-					return response.redirect('/account');
+					logfile('error.log', 'unauthorized access via cookie for user "' + cookies.username + '"');
+					return response.status(403).send('Unauthorized access');
 				}
 			});
 		});
