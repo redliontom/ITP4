@@ -137,6 +137,12 @@ function checkAuthSession(request, response, next) {
 		series = cookies.series;
 		token = cookies.token;
 		remember = true;
+	} else {
+		if (request.path == '/') {
+			return next();
+		} else {
+			return response.redirect('/');
+		}
 	}
 
 	DB.checkAuthSession(username, series, token, function (error, result) {
@@ -153,7 +159,7 @@ function checkAuthSession(request, response, next) {
 		} else if (request.path == '/') {
 			return next();
 		} else {
-			logfile('error.log', 'unauthorized access via cookie for user "' + cookies.username + '"');
+			logfile('error.log', 'unauthorized access via cookie for user "' + username + '"');
 			return response.status(403).send('Unauthorized access');
 		}
 	});
@@ -209,12 +215,16 @@ function createAuthSession(request, response, next, username, remember) {
 					request.session.remember = remember;
 
 					if (request.path.indexOf('/account') != -1) {
-						return next();
+						if (request.path.indexOf('/signup') != -1 || request.path.indexOf('/forgot') != -1) {
+							return response.redirect('/account');
+						} else {
+							return next();
+						}
 					} else {
 						return response.redirect('/account');
 					}
 				} else {
-					logfile('error.log', 'unauthorized access via cookie for user "' + cookies.username + '"');
+					logfile('error.log', 'unauthorized access via session for user "' + username + '"');
 					return response.status(403).send('Unauthorized access');
 				}
 			});
@@ -288,10 +298,10 @@ function signup(request, response, next) {
 		if (body && body.first && body.last && body.user && body.mail && body.password) {
 			DB.signUp(body.first, body.last, body.user, body.mail, body.password, function (error, result) {
 				if (error) {
-					return next();
+					return response.status(200).send('Username is not valid');
 				} else {
 					createUserDir(body.user);
-					response.redirect('/account');
+					createAuthSession(request, response, next, body.user, false);
 				}
 			});
 		} else {
