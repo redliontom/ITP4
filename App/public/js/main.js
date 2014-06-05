@@ -33,7 +33,7 @@ $(document).ready(function() {
                $("#profile_banner").animate({opacity:"1", filter:"alpha(opacity=100)"}, 200);
             });
         });
-        document.getElementById("subsection").innerHTML="chronos38";
+        document.getElementById("subsection").innerHTML="Username";
     });
     
     $("#m-find-friends").click(function() {
@@ -78,7 +78,7 @@ $(document).ready(function() {
                $("#profile_banner").animate({opacity:"1", filter:"alpha(opacity=100)"}, 200);
             });
         });
-        document.getElementById("subsection").innerHTML="chronos38";
+        document.getElementById("subsection").innerHTML="Username";
     });
     
     $("#m-mfind-friends").click(function() {

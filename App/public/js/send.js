@@ -89,6 +89,7 @@ $( document ).ready(function() {
                         $('#response').css('visibility', 'hidden');
                         $('#response').removeClass('send_message_success');
 	               }, 3000);
+                    recive_data();
                 }
             });
         }
@@ -139,6 +140,7 @@ $( document ).ready(function() {
                         $('#response').css('visibility', 'hidden');
                         $('#response').removeClass('send_message_success');
 	               }, 3000);
+                    recive_data()
                 },
                     statusCode: {
                         500: function(msg) {
@@ -224,6 +226,8 @@ $( document ).ready(function() {
     });
 });
 
+//*******************************************************************************
+
 // Settings: Daten werden vom Client geladen
 function load_data() {
      var data = {};
@@ -239,6 +243,7 @@ function load_data() {
     });
 }
 
+// Daten vom Server via POST holen
 function recive_data() {
     $.post('/account/settings', function(data) {
 	   $("#td_name").html("");
