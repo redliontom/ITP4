@@ -484,12 +484,12 @@ function upload(request, response, next) {
 
 	try {
 		var body = request.body;
-		//var files = request.files;
+		var files = request.files;
 
-		//if (body && files && files.picture) {			
-		if (body && body.picture && body.title) {
-			//var picture = files.picture;
-			var picture = body.picture;
+		if (body && files && files.picture) {			
+		//if (body && body.picture && body.title) {
+			var picture = files.picture;
+			//var picture = body.picture;
 
 			var filename = randomString(8) + "_" + picture.name;
 			var title = body.title;
@@ -684,7 +684,7 @@ function sendSettings(request, response, next) {
 
 		var row = result[0];
 
-		response.status(200).send({
+		return response.status(200).send({
 			forename: row.forename,
 			surname: row.surname,
 			mail: row.email,
