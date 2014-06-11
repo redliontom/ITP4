@@ -197,7 +197,7 @@ begin
 	insert into public.foto(pk_foto, fk_user, name, directory, flash, aperture, exposure_time, focal_distance, iso) 
 		values (
 			lastId,
-			(SELECT pk_user FROM public.user WHERE username LIKE _username),
+			_username,
 			_name,
 			_directory,
 			_flash,
