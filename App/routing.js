@@ -525,7 +525,8 @@ function upload(request, response, next) {
 									return response.status(500).send('Could not resize image');
 								}
 
-								response.status(200).send('Upload successful');
+								//response.status(200).send('Upload successful');
+								return response.status(200).redirect('/account');
 							});
 						}
 					});
