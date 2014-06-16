@@ -182,11 +182,11 @@ create or replace function func_save_picture_infos(
 	_username text,
 	_name text,
 	_directory text,
-	_flash boolean,
+	_flash text,
 	_aperture text,
 	_exposure_time text,
-	_focal_distance integer,
-	_iso integer
+	_focal_distance text,
+	_iso text
 	)
 	returns boolean
 	as $$

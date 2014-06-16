@@ -245,8 +245,10 @@ exports.savePictureInfos = function (username, name, directory, flash, aperture,
 	flash = sanitizer.sanitize(flash);
 	aperture = sanitizer.sanitize(aperture);
 	exposure_time = sanitizer.sanitize(exposure_time);
-	focal_distance = focal_distance == null || focal_distance == "" ? 0 : parseInt(focal_distance);
-	iso = iso == null || iso == "" ? 0 : parseInt(iso);
+	/*focal_distance = focal_distance == null || focal_distance == "" ? 0 : parseInt(focal_distance);
+	iso = iso == null || iso == "" ? 0 : parseInt(iso);*/
+	focal_distance = sanitizer.sanitize(focal_distance);
+	iso = sanitizer.sanitize(iso);
 
 	pg.connect(conString, function(error, client, done){
 		if (error){

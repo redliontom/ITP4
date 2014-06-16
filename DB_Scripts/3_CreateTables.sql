@@ -35,11 +35,11 @@ create table public.foto (
 	fk_user			text references public.user(username),
 	name 			text,
 	directory		text,
-	flash			boolean,
+	flash			text,
 	aperture		text,
 	exposure		text,
-	focal_distance	integer,
-	iso				integer,
+	focal_distance	text,
+	iso				text,
 	exposure_time	text
 );
 
